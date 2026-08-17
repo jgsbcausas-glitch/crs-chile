@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CRS Chile — qué CRS atiende cada comuna</title>
+<meta name="description" content="Para una comuna: qué Centro de Reinserción Social la atiende y qué formas de cumplimiento controla.">
+<style>
+  /* Sin librerías a propósito: es una página que tiene que abrir rápido desde
+     la red de un tribunal y seguir funcionando dentro de diez años. */
+  :root {
+    --fondo: #f6f7f9; --panel: #fff; --texto: #1c2024; --suave: #667;
+    --borde: #dfe3e8; --azul: #1f4e79; --azul-claro: #4a80ad;
+    --ok: #2e7d4f; --alerta: #b8860b; --aviso-fondo: #fdf8ec;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --fondo: #14171a; --panel: #1c2024; --texto: #e8eaed; --suave: #98a0a8;
+      --borde: #2e3439; --azul: #7fb0d8; --azul-claro: #a8cae6;
+      --ok: #6bbd8c; --alerta: #d9b366; --aviso-fondo: #241f14;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--fondo); color: var(--texto);
+    font: 15px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  .envoltorio { max-width: 860px; margin: 0 auto; padding: 24px 16px 60px; }
+  header h1 { font-size: 25px; margin: 0 0 6px; letter-spacing: -.01em; }
+  header p { margin: 0 0 16px; color: var(--suave); }
+  .aviso {
+    background: var(--aviso-fondo); border-left: 3px solid var(--alerta);
+    padding: 10px 14px; border-radius: 0 7px 7px 0; margin: 0 0 20px; font-size: 13.5px;
+  }
+  .pestanas { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+  .pestana {
+    border: 1px solid var(--borde); background: var(--panel); color: var(--texto);
+    padding: 7px 14px; border-radius: 7px; cursor: pointer; font: inherit; font-size: 14px;
+  }
+  .pestana[aria-selected="true"] { background: var(--azul); border-color: var(--azul); color: #fff; font-weight: 600; }
+  @media (prefers-color-scheme: dark) { .pestana[aria-selected="true"] { color: #14171a; } }
+  .panel { background: var(--panel); border: 1px solid var(--borde); border-radius: 11px; padding: 16px; margin-bottom: 14px; }
+  input[type="search"] {
+    width: 100%; padding: 11px 13px; font: inherit; border: 1px solid var(--borde);
+    border-radius: 8px; background: var(--fondo); color: var(--texto);
+  }
+  .sugerencias { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 6px; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); }
+  .sugerencias button {
+    width: 100%; text-align: left; border: 1px solid var(--borde); background: var(--fondo);
+    color: var(--texto); border-radius: 8px; padding: 8px 11px; cursor: pointer; font: inherit;
+  }
+  .sugerencias button:hover { border-color: var(--azul-claro); }
+  .sugerencias small { display: block; color: var(--suave); font-size: 12px; }
+  .competente { border-left: 4px solid var(--ok); }
+  .etiqueta { font-size: 10.5px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--azul); }
+  h2 { font-size: 18px; margin: 0 0 4px; }
+  h3 { font-size: 14px; margin: 18px 0 6px; color: var(--suave); font-weight: 600; }
+  .dato { color: var(--suave); font-size: 13.5px; margin: 2px 0; }
+  .fichas { display: grid; gap: 8px; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+  .ficha { border: 1px solid var(--borde); border-radius: 9px; padding: 10px 12px; font-size: 13.5px; }
+  .km { float: right; font-size: 11px; font-weight: 700; color: var(--suave); }
+  .formas { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 7px; }
+  .forma { font-size: 11px; padding: 2px 8px; border-radius: 20px; border: 1px solid var(--borde); }
+  .forma.si { background: color-mix(in srgb, var(--ok) 14%, transparent); border-color: var(--ok); }
+  .forma.no { color: var(--suave); text-decoration: line-through; }
+  .barra { height: 9px; border-radius: 20px; background: var(--borde); overflow: hidden; margin: 8px 0; }
+  .barra > i { display: block; height: 100%; background: var(--ok); }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--borde); }
+  th { color: var(--suave); font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+  a { color: var(--azul); }
+  .pie { color: var(--suave); font-size: 12.5px; text-align: center; margin-top: 24px; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<div class="envoltorio">
+
+<header>
+  <h1>CRS Chile</h1>
+  <p>Para una comuna: qué Centro de Reinserción Social la atiende y qué formas de cumplimiento controla.</p>
+</header>
+
+<p class="aviso">
+  <strong>No es oficial ni vinculante.</strong> Es un dato de referencia construido entre
+  funcionarios judiciales a partir de fuentes públicas. Gendarmería no lo revisa.
+  <strong>Confirme con el CRS antes de despachar.</strong>
+</p>
+
+<div class="pestanas" role="tablist">
+  <button class="pestana" role="tab" aria-selected="true" data-vista="buscar">Buscar una comuna</button>
+  <button class="pestana" role="tab" aria-selected="false" data-vista="estado">Estado del catastro</button>
+</div>
+
+<section id="buscar">
+  <div class="panel">
+    <input type="search" id="q" placeholder="Escribe una comuna: Ñuñoa, Panguipulli, Puerto Montt…"
+           autocomplete="off" aria-label="Buscar comuna">
+    <ul class="sugerencias" id="sugerencias"></ul>
+  </div>
+  <div id="ficha"></div>
+</section>
+
+<section id="estado" hidden>
+  <div class="panel">
+    <h2>Cuánto llevamos</h2>
+    <p class="dato" id="avance">Cargando…</p>
+    <div class="barra"><i id="barra" style="width:0"></i></div>
+    <p class="dato">
+      Cada CRS cuenta como listo cuando alguien informó al menos una forma de cumplimiento.
+      <a href="https://github.com/jgsbcausas-glitch/crs-chile/issues/new?template=01-formas-de-cumplimiento.yml">Aportar uno</a>.
+    </p>
+  </div>
+  <div class="panel">
+    <h2>CRS sin ningún dato</h2>
+    <p class="dato">Los que más ayudan si conoces alguno.</p>
+    <table><thead><tr><th>CRS</th><th>Comuna</th><th>Comunas que atiende</th></tr></thead>
+    <tbody id="faltantes"></tbody></table>
+  </div>
+</section>
+
+<p class="pie">
+  Datos bajo CC BY 4.0 ·
+  <a href="https://github.com/jgsbcausas-glitch/crs-chile">Ver el repositorio y aportar</a>
+</p>
+
+</div>
+
+<script>
+// Los CSV se leen del propio repositorio: una sola copia del dato, la que está
+// versionada. Si la página se abre desde una copia local o desde Pages servido
+// en la raíz, los archivos están al lado; si se publica solo `docs/`, hay que ir
+// a buscarlos a raw.githubusercontent, que permite el acceso desde otro origen.
+const REMOTO = 'https://raw.githubusercontent.com/jgsbcausas-glitch/crs-chile/main/';
+let BASE = REMOTO;
+
+async function elegirOrigen() {
+  for (const candidato of ['../', './']) {
+    try {
+      const r = await fetch(candidato + 'datos/comunas.csv', { method: 'GET' });
+      if (r.ok && (await r.text()).startsWith('cut;')) return (BASE = candidato);
+    } catch (_) { /* seguimos con el siguiente */ }
+  }
+  return (BASE = REMOTO);
+}
+
+const normalizar = (s) => (s || '').toLowerCase()
+  .normalize('NFD').replace(/[̀-ͯ]/g, '')
+  .replace(/[^a-z0-9 ]+/g, ' ').replace(/\s+/g, ' ').trim();
+
+function csv(texto) {
+  const lineas = texto.replace(/^﻿/, '').trim().split(/\r?\n/);
+  const cab = lineas.shift().split(';');
+  return lineas.filter(l => l.trim()).map(l => {
+    const celdas = l.split(';');
+    return Object.fromEntries(cab.map((c, i) => [c, (celdas[i] ?? '').trim()]));
+  });
+}
+
+const traer = (n) => fetch(BASE + n).then(r => r.text()).then(csv);
+
+const km = (a, b) => {
+  if (!a.lat || !b.lat) return null;
+  const p = Math.PI / 180, la1 = +a.lat, lo1 = +a.lon, la2 = +b.lat, lo2 = +b.lon;
+  const h = 0.5 - Math.cos((la2 - la1) * p) / 2
+    + Math.cos(la1 * p) * Math.cos(la2 * p) * (1 - Math.cos((lo2 - lo1) * p)) / 2;
+  return Math.round(12742 * Math.asin(Math.sqrt(h)) * 10) / 10;
+};
+
+const esc = (s) => (s || '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+let D = {};
+
+elegirOrigen().then(() => Promise.all([
+  traer('datos/comunas.csv'), traer('datos/crs.csv'),
+  traer('datos/crs_jurisdiccion.csv'), traer('datos/crs_formas.csv'),
+  traer('vocabulario/formas.csv'),
+])).then(([comunas, crs, jur, formas, vocab]) => {
+  D = {
+    comunas,
+    crs: Object.fromEntries(crs.map(c => [c.crs, c])),
+    porCut: Object.fromEntries(comunas.map(c => [c.cut, c])),
+    jur: Object.fromEntries(jur.map(j => [j.cut, j])),
+    vocab: Object.fromEntries(vocab.map(v => [v.forma, v.nombre])),
+    formas: formas.reduce((a, f) => ((a[f.crs] ??= []).push(f), a), {}),
+  };
+  comunas.forEach(c => c.norm = normalizar(c.comuna));
+  pintarEstado();
+  if (location.hash.length > 1) {
+    const c = comunas.find(c => c.norm === normalizar(decodeURIComponent(location.hash.slice(1))));
+    if (c) mostrar(c);
+  }
+}).catch(() => {
+  document.getElementById('ficha').innerHTML =
+    '<div class="panel">No se pudieron cargar los datos. Recarga en un momento.</div>';
+});
+
+// ------------------------------------------------------------------ Buscar
+
+const q = document.getElementById('q');
+q.addEventListener('input', () => {
+  const n = normalizar(q.value);
+  const lista = document.getElementById('sugerencias');
+  document.getElementById('ficha').innerHTML = '';
+  if (n.length < 2 || !D.comunas) return lista.innerHTML = '';
+
+  const calzan = D.comunas.filter(c => c.norm.includes(n))
+    .sort((a, b) => (a.norm.startsWith(n) ? 0 : 1) - (b.norm.startsWith(n) ? 0 : 1)
+      || a.comuna.localeCompare(b.comuna)).slice(0, 12);
+
+  if (calzan.length === 1) { lista.innerHTML = ''; return mostrar(calzan[0]); }
+  lista.innerHTML = calzan.map(c =>
+    `<li><button data-cut="${c.cut}"><strong>${esc(c.comuna)}</strong><small>${esc(c.region)}</small></button></li>`
+  ).join('') || '<li class="dato">Ninguna comuna calza.</li>';
+  lista.querySelectorAll('button').forEach(b =>
+    b.onclick = () => { document.getElementById('sugerencias').innerHTML = ''; mostrar(D.porCut[b.dataset.cut]); });
+});
+
+function chips(clave) {
+  const filas = D.formas[clave] || [];
+  if (!filas.length) return '<p class="dato">Formas de cumplimiento: <strong>sin registrar</strong>. ' +
+    '<a href="https://github.com/jgsbcausas-glitch/crs-chile/issues/new?template=01-formas-de-cumplimiento.yml">¿Las sabes?</a></p>';
+  return '<div class="formas">' + filas.map(f =>
+    `<span class="forma ${f.controla === 'si' ? 'si' : 'no'}" title="${esc(f.fuente)}">${esc(D.vocab[f.forma] || f.forma)}</span>`
+  ).join('') + '</div>';
+}
+
+function fichaCrs(clave, extra = '') {
+  const c = D.crs[clave];
+  if (!c) return '';
+  return `<div class="ficha">${extra}
+    <strong>${esc(c.nombre)}</strong>
+    <div class="dato">${esc(c.direccion)}</div>
+    ${c.telefono ? `<div class="dato">${esc(c.telefono)}</div>` : ''}
+    ${chips(clave)}</div>`;
+}
+
+function mostrar(comuna) {
+  location.hash = encodeURIComponent(comuna.comuna);
+  const j = D.jur[comuna.cut];
+  const competente = j && D.crs[j.crs];
+
+  const aviso = !j ? '<p class="aviso">Esta comuna no tiene CRS asignado en los datos.</p>'
+    : j.origen === 'inferida'
+      ? '<p class="aviso">⚠ <strong>' + esc(comuna.comuna) + ' no figura en la tabla oficial.</strong> El CRS se dedujo por provincia: conviene confirmarlo.</p>'
+    : j.origen === 'manual'
+      ? '<p class="aviso">CRS competente <strong>según una corrección aportada</strong>, no según la tabla oficial.' + (j.nota ? ' ' + esc(j.nota) : '') + '</p>'
+      : '<p class="dato">Según la jurisdicción publicada por Gendarmería. No es «el más cercano»: es el que atiende ' + esc(comuna.comuna) + '.</p>';
+
+  const vecinos = Object.values(D.crs)
+    .filter(c => c.crs !== j?.crs)
+    .map(c => ({ c, d: km(comuna, D.porCut[c.cut_sede] || {}) }))
+    .filter(v => v.d !== null).sort((a, b) => a.d - b.d).slice(0, 3);
+
+  document.getElementById('ficha').innerHTML = `
+    <div class="panel competente">
+      <span class="etiqueta">CRS competente</span>
+      <h2>${esc(comuna.comuna)}</h2>
+      <p class="dato">${esc(comuna.provincia ? 'Provincia de ' + comuna.provincia + ' · ' : '')}${esc(comuna.region)}</p>
+      ${aviso}
+      ${competente ? `<div class="fichas">${fichaCrs(j.crs)}</div>` : ''}
+    </div>
+    <div class="panel">
+      <h3>Otros CRS cerca — si el competente no controla esa forma</h3>
+      <p class="dato">No son competentes: están por cercanía en línea recta, para saber a quién derivar.</p>
+      <div class="fichas">${vecinos.map(v => fichaCrs(v.c.crs, `<span class="km">≈ ${v.d} km</span>`)).join('')}</div>
+    </div>`;
+}
+
+// ------------------------------------------------------------------ Estado
+
+function pintarEstado() {
+  const total = Object.keys(D.crs).length;
+  const conDato = Object.keys(D.formas).filter(k => (D.formas[k] || []).length).length;
+  document.getElementById('avance').textContent =
+    `${conDato} de ${total} CRS tienen al menos una forma de cumplimiento registrada.`;
+  document.getElementById('barra').style.width = (total ? conDato / total * 100 : 0) + '%';
+
+  const atiende = {};
+  Object.values(D.jur).forEach(j => atiende[j.crs] = (atiende[j.crs] || 0) + 1);
+
+  document.getElementById('faltantes').innerHTML = Object.values(D.crs)
+    .filter(c => !(D.formas[c.crs] || []).length)
+    .sort((a, b) => (atiende[b.crs] || 0) - (atiende[a.crs] || 0))
+    .map(c => `<tr><td>${esc(c.nombre)}</td><td>${esc(c.comuna_sede)}</td><td>${atiende[c.crs] || 0}</td></tr>`)
+    .join('') || '<tr><td colspan="3">Ninguno: están todos con algún dato.</td></tr>';
+}
+
+document.querySelectorAll('.pestana').forEach(b => b.onclick = () => {
+  document.querySelectorAll('.pestana').forEach(o => o.setAttribute('aria-selected', o === b));
+  document.getElementById('buscar').hidden = b.dataset.vista !== 'buscar';
+  document.getElementById('estado').hidden = b.dataset.vista !== 'estado';
+});
+</script>
+</body>
+</html>

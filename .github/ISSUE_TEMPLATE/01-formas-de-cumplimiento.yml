@@ -1,0 +1,129 @@
+name: Aportar formas de cumplimiento de un CRS
+description: Decir qué penas sustitutivas controla un CRS. Es el dato que Gendarmería no publica.
+title: "[FORMAS] "
+labels: ["formas-de-cumplimiento", "por-revisar"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Gracias por aportar. Este formulario existe para que **no tengas que saber git**:
+        lo llenas, alguien lo revisa y un robot lo convierte en una fila del archivo.
+
+        Aporta solo lo que te conste. **Dejar una forma sin marcar no es decir que no la
+        lleva** — es decir que no lo sabes, que es una respuesta perfectamente válida.
+
+  - type: dropdown
+    id: crs
+    attributes:
+      label: ¿Qué CRS?
+      options:
+        - "CRS ALTO HOSPICIO"
+        - "CRS ANGOL"
+        - "CRS ANTOFAGASTA"
+        - "CRS CALAMA"
+        - "CRS CASTRO"
+        - "CRS CAUQUENES"
+        - "CRS CAÑETE"
+        - "CRS CHILLÁN"
+        - "CRS CONCEPCIÓN"
+        - "CRS CORONEL"
+        - "CRS COYHAIQUE"
+        - "CRS CURICO"
+        - "CRS DE ARICA"
+        - "CRS DE COPIAPÓ"
+        - "CRS ILLAPEL"
+        - "CRS IQUIQUE"
+        - "CRS LA SERENA"
+        - "CRS LINARES"
+        - "CRS LOS ANDES"
+        - "CRS LOS ANGELES"
+        - "CRS OSORNO"
+        - "CRS OVALLE"
+        - "CRS PUERTO MONTT"
+        - "CRS PUNTA ARENAS"
+        - "CRS QUILLOTA"
+        - "CRS QUILPUÉ"
+        - "CRS RANCAGUA"
+        - "CRS SAN ANTONIO"
+        - "CRS SAN FERNANDO"
+        - "CRS SANTIAGO"
+        - "CRS SANTIAGO NORTE"
+        - "CRS SANTIAGO OCCIDENTE"
+        - "CRS SANTIAGO ORIENTE"
+        - "CRS SANTIAGO SUR"
+        - "CRS SANTIAGO SUR II"
+        - "CRS TALCA"
+        - "CRS TEMUCO"
+        - "CRS VALDIVIA"
+        - "CRS VALLENAR"
+        - "CRS VALPARAíSO"
+        - "CRS VILLARRICA"
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: controla
+    attributes:
+      label: Formas de cumplimiento que SÍ controla
+      description: Marca solo las que te consten.
+      options:
+        - label: "Remisión condicional"
+        - label: "Reclusión parcial"
+        - label: "Libertad vigilada"
+        - label: "Libertad vigilada intensiva"
+        - label: "Prestación de servicios en beneficio de la comunidad"
+        - label: "Monitoreo telemático"
+        - label: "Expulsión"
+        - label: "Libertad condicional"
+
+  - type: checkboxes
+    id: no_controla
+    attributes:
+      label: Formas que confirmaste que NO controla
+      description: Este dato vale tanto como el anterior: evita derivaciones inútiles.
+      options:
+        - label: "Remisión condicional"
+        - label: "Reclusión parcial"
+        - label: "Libertad vigilada"
+        - label: "Libertad vigilada intensiva"
+        - label: "Prestación de servicios en beneficio de la comunidad"
+        - label: "Monitoreo telemático"
+        - label: "Expulsión"
+        - label: "Libertad condicional"
+
+  - type: dropdown
+    id: como
+    attributes:
+      label: ¿Cómo lo sabes?
+      description: Sin esto el dato no se puede sostener frente a nadie.
+      options:
+        - "Me lo confirmó el CRS (llamada o correo)"
+        - "Aparece en un documento oficial de Gendarmería"
+        - "Lo sé por causas que tramito habitualmente en ese CRS"
+        - "Me lo informó otro tribunal"
+        - "Otro (lo explico abajo)"
+    validations:
+      required: true
+
+  - type: input
+    id: detalle
+    attributes:
+      label: Detalle de la fuente
+      description: Con quién hablaste, qué documento, qué fecha. Una línea basta.
+      placeholder: "Llamada al CRS el 12-08-2026, jefatura técnica."
+    validations:
+      required: true
+
+  - type: textarea
+    id: nota
+    attributes:
+      label: Algo más que convenga saber (opcional)
+      placeholder: "Lleva PSBC solo con convenio municipal vigente."
+
+  - type: checkboxes
+    id: sin_datos_personales
+    attributes:
+      label: Confirmación
+      options:
+        - label: "No incluí nombres, RUT ni teléfonos personales de nadie."
+          required: true

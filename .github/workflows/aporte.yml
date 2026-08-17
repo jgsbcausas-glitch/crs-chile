@@ -1,0 +1,76 @@
+name: Convertir un aporte aprobado en propuesta de cambio
+
+# Este es el corazón del repo: un colega llena un formulario, quien mantiene
+# revisa y pone la etiqueta «aprobado», y acá se convierte en una fila del CSV
+# dentro de un pull request. Nadie necesita saber git para colaborar.
+#
+# La etiqueta es a propósito: un issue por sí solo no cambia nada. Alguien tiene
+# que mirarlo antes, y el pull request deja el cambio a la vista antes de entrar.
+on:
+  issues:
+    types: [labeled]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  convertir:
+    if: github.event.label.name == 'aprobado'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Guardar el cuerpo del issue
+        # Por archivo y no por variable de entorno: el cuerpo lo escribió otra
+        # persona y no tiene por qué pasar por el intérprete de la shell.
+        env:
+          CUERPO: ${{ github.event.issue.body }}
+        run: printf '%s' "$CUERPO" > /tmp/aporte.md
+
+      - name: Convertir el aporte en filas
+        id: convertir
+        run: |
+          python herramientas/aporte_a_csv.py \
+            --cuerpo /tmp/aporte.md \
+            --autor "${{ github.event.issue.user.login }}" \
+            --numero "${{ github.event.issue.number }}"
+
+      - name: Validar el resultado
+        run: python herramientas/validar.py
+
+      - name: Abrir la propuesta de cambio
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: aporte/issue-${{ github.event.issue.number }}
+          commit-message: |
+            Aporte #${{ github.event.issue.number }}: ${{ steps.convertir.outputs.resumen }}
+
+            Viene del issue #${{ github.event.issue.number }}, de @${{ github.event.issue.user.login }}.
+          title: "Aporte #${{ github.event.issue.number }}: ${{ steps.convertir.outputs.resumen }}"
+          body: |
+            Generado automáticamente desde el issue #${{ github.event.issue.number }},
+            aportado por @${{ github.event.issue.user.login }}.
+
+            **Antes de combinar:** revisa el diff. Si otro colega ya había informado
+            algo distinto para el mismo CRS y la misma forma, acá se ve el cambio —y
+            esa discrepancia conviene resolverla en el issue antes de seguir.
+
+            Cierra #${{ github.event.issue.number }}
+          labels: aporte-automatico
+
+      - name: Avisar en el issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: 'Gracias por el aporte. Ya quedó en una propuesta de cambio; cuando se combine, el dato entra al repo.'
+            })

@@ -1,0 +1,82 @@
+name: Corregir la jurisdicción de una comuna
+description: Decir que una comuna la atiende un CRS distinto del que figura.
+title: "[JURISDICCIÓN] "
+labels: ["jurisdiccion", "por-revisar"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        La tabla que publica Gendarmería tiene erratas, y 23 comunas no figuran en ella:
+        su CRS está **deducido por provincia** y puede estar mal. Si sabes cuál es el que
+        de verdad la controla, esto lo arregla para todos.
+
+  - type: input
+    id: comuna
+    attributes:
+      label: Comuna
+      placeholder: "Panguipulli"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: crs
+    attributes:
+      label: CRS que la atiende
+      options:
+        - "CRS ALTO HOSPICIO"
+        - "CRS ANGOL"
+        - "CRS ANTOFAGASTA"
+        - "CRS CALAMA"
+        - "CRS CASTRO"
+        - "CRS CAUQUENES"
+        - "CRS CAÑETE"
+        - "CRS CHILLÁN"
+        - "CRS CONCEPCIÓN"
+        - "CRS CORONEL"
+        - "CRS COYHAIQUE"
+        - "CRS CURICO"
+        - "CRS DE ARICA"
+        - "CRS DE COPIAPÓ"
+        - "CRS ILLAPEL"
+        - "CRS IQUIQUE"
+        - "CRS LA SERENA"
+        - "CRS LINARES"
+        - "CRS LOS ANDES"
+        - "CRS LOS ANGELES"
+        - "CRS OSORNO"
+        - "CRS OVALLE"
+        - "CRS PUERTO MONTT"
+        - "CRS PUNTA ARENAS"
+        - "CRS QUILLOTA"
+        - "CRS QUILPUÉ"
+        - "CRS RANCAGUA"
+        - "CRS SAN ANTONIO"
+        - "CRS SAN FERNANDO"
+        - "CRS SANTIAGO"
+        - "CRS SANTIAGO NORTE"
+        - "CRS SANTIAGO OCCIDENTE"
+        - "CRS SANTIAGO ORIENTE"
+        - "CRS SANTIAGO SUR"
+        - "CRS SANTIAGO SUR II"
+        - "CRS TALCA"
+        - "CRS TEMUCO"
+        - "CRS VALDIVIA"
+        - "CRS VALLENAR"
+        - "CRS VALPARAíSO"
+        - "CRS VILLARRICA"
+    validations:
+      required: true
+
+  - type: input
+    id: figura
+    attributes:
+      label: ¿Qué dice hoy el repo? (opcional)
+      placeholder: "CRS VILLARRICA"
+
+  - type: input
+    id: detalle
+    attributes:
+      label: ¿Cómo lo sabes?
+      placeholder: "Lo confirmó el CRS Valdivia por teléfono el 17-08-2026."
+    validations:
+      required: true

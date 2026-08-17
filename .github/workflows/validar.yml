@@ -1,0 +1,29 @@
+name: Validar los datos
+
+# Corre en cada cambio y en cada propuesta. Es el control de calidad del repo:
+# si un aporte apunta a una comuna que no existe o inventa una forma de
+# cumplimiento, se ve acá y no dentro de una resolución.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  validar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Validar los CSV
+        run: python herramientas/validar.py
+
+      - name: Comprobar que los formularios siguen al día
+        # Los formularios llevan la lista de CRS adentro. Si se agrega uno a
+        # datos/crs.csv y nadie regenera los formularios, el colega no puede
+        # aportar sobre él y nadie se entera hasta que reclama.
+        run: python herramientas/generar_formularios.py --comprobar

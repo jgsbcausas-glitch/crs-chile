@@ -1,0 +1,49 @@
+name: Corregir un dato de contacto o informar algo más
+description: Una dirección que cambió, un teléfono que ya no responde, un CRS que falta.
+title: "[DATO] "
+labels: ["datos", "por-revisar"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Para todo lo que no calza en los otros dos formularios. Si es una duda y no un
+        aporte, mejor abre una
+        [discusión](../../discussions) en vez de un issue.
+
+  - type: dropdown
+    id: que
+    attributes:
+      label: ¿De qué se trata?
+      options:
+        - "Una dirección o teléfono que cambió"
+        - "Un CRS o establecimiento que falta"
+        - "Un nombre mal escrito"
+        - "Otra cosa"
+    validations:
+      required: true
+
+  - type: input
+    id: cual
+    attributes:
+      label: ¿Qué establecimiento?
+      placeholder: "CRS SANTIAGO OCCIDENTE"
+    validations:
+      required: true
+
+  - type: textarea
+    id: detalle
+    attributes:
+      label: Qué dice hoy y qué debería decir
+      placeholder: |
+        Dice: MONUMENTO 2079, Maipú
+        Debería decir: Monumento 2079, Maipú — se trasladaron en julio de 2026.
+    validations:
+      required: true
+
+  - type: input
+    id: fuente
+    attributes:
+      label: ¿Cómo lo sabes?
+      placeholder: "Oficio de respuesta del CRS, 05-08-2026."
+    validations:
+      required: true

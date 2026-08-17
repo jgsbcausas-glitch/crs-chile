@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Preguntar algo o proponer una idea
+    url: https://github.com/jgsbcausas-glitch/crs-chile/discussions
+    about: Para dudas y conversaciones. Los issues son para aportar datos concretos.
+  - name: Cómo se aporta acá
+    url: https://github.com/jgsbcausas-glitch/crs-chile/blob/main/CONTRIBUIR.md
+    about: La guía completa, en tres minutos de lectura.
