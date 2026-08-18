@@ -80,7 +80,7 @@ body:
     id: no_controla
     attributes:
       label: Formas que confirmaste que NO controla
-      description: Este dato vale tanto como el anterior: evita derivaciones inútiles.
+      description: "Este dato vale tanto como el anterior y evita derivaciones inútiles."
       options:
         - label: "Remisión condicional"
         - label: "Reclusión parcial"

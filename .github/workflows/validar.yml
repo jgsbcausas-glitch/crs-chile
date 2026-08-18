@@ -19,8 +19,16 @@ jobs:
         with:
           python-version: '3.12'
 
+      - name: Instalar PyYAML
+        run: pip install --quiet pyyaml
+
       - name: Validar los CSV
         run: python herramientas/validar.py
+
+      - name: Validar los formularios de aporte
+        # Un texto sin comillas con dos puntos hacía que GitHub descartara un
+        # formulario entero y sin avisar: los colegas veían un issue en blanco.
+        run: python herramientas/validar_formularios.py
 
       - name: Comprobar que los formularios siguen al día
         # Los formularios llevan la lista de CRS adentro. Si se agrega uno a
