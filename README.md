@@ -98,6 +98,7 @@ cambio, pero si algo se cuela, [avísanos](../../issues/new/choose) y se saca de
 
 ---
 
-Nació en el **11° Juzgado de Garantía de Santiago**, resolviendo un problema propio:
-cuando la agenda ofrece una audiencia de control de ejecución, hay que saber a qué CRS se
-dirige el oficio. Lo abrimos porque el problema no es de un tribunal, es de todos.
+Coordinado por **F. Barrera**, a partir de fuentes públicas y de lo que aporta cada
+colega. Nació de un problema concreto: cuando la agenda ofrece una audiencia de control de
+ejecución, hay que saber a qué CRS se dirige el oficio. Se abrió porque el problema no es
+de un tribunal, es de todos.
