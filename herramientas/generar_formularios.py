@@ -48,6 +48,9 @@ body:
         Aporta solo lo que te conste. **Dejar una forma sin marcar no es decir que no la
         lleva** — es decir que no lo sabes, que es una respuesta perfectamente válida.
 
+        Escribe el nombre del CRS en el título, después de `[FORMAS]`. Si se te
+        olvida no pasa nada: al aprobarlo se corrige solo.
+
   - type: dropdown
     id: crs
     attributes:

@@ -44,6 +44,25 @@ jobs:
       - name: Validar el resultado
         run: python herramientas/validar.py
 
+      - name: Poner al issue un título que se distinga
+        # GitHub no puede armar el título desde un desplegable, así que todos
+        # los aportes llegan como «[FORMAS]» a secas. Con treinta issues eso es
+        # una lista ilegible; acá se corrige con el dato que ya conocemos.
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const titulo = process.env.TITULO;
+            if (titulo && titulo !== context.payload.issue.title) {
+              await github.rest.issues.update({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: titulo,
+              });
+            }
+        env:
+          TITULO: ${{ steps.convertir.outputs.titulo }}
+
       - name: Abrir la propuesta de cambio
         uses: peter-evans/create-pull-request@v6
         with:

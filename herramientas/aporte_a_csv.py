@@ -131,8 +131,12 @@ def formas_de_cumplimiento(campos, autor):
     filas.sort(key=lambda f: (f['crs'], f['forma']))
     escribir_csv('datos/crs_formas.csv', cabecera, filas)
 
-    return '%s: %d forma(s) nueva(s) y %d actualizada(s)' % (
-        campos.get('¿Qué CRS?'), nuevas, cambiadas)
+    nombre_crs = campos.get('¿Qué CRS?')
+
+    return (
+        '%s: %d forma(s) nueva(s) y %d actualizada(s)' % (nombre_crs, nuevas, cambiadas),
+        '[FORMAS] %s' % nombre_crs,
+    )
 
 
 def jurisdiccion(campos, autor):
@@ -170,7 +174,10 @@ def jurisdiccion(campos, autor):
     filas.sort(key=lambda f: f['cut'])
     escribir_csv('datos/crs_jurisdiccion.csv', cabecera, filas)
 
-    return '%s pasa de %s a %s' % (nombre_comuna, antes or 'sin CRS', crs)
+    return (
+        '%s pasa de %s a %s' % (nombre_comuna, antes or 'sin CRS', crs),
+        '[JURISDICCIÓN] %s → %s' % (nombre_comuna, campos.get('CRS que la atiende')),
+    )
 
 
 def main():
@@ -189,14 +196,17 @@ def main():
     if not tipo:
         sys.exit('El issue no tiene la forma de ninguno de los formularios conocidos.')
 
-    resumen = formas_de_cumplimiento(campos, args.autor) if tipo == 'formas' \
+    resumen, titulo = formas_de_cumplimiento(campos, args.autor) if tipo == 'formas' \
         else jurisdiccion(campos, args.autor)
 
     print('Aporte #%s de @%s → %s' % (args.numero, args.autor, resumen))
-    # El workflow lo usa para el título del pull request.
+    # El workflow los usa para el título del pull request y para renombrar
+    # el issue: GitHub no puede armar un título desde un desplegable, así
+    # que todos llegan como «[FORMAS]» a secas y no hay cómo distinguirlos.
     if os.environ.get('GITHUB_OUTPUT'):
         with io.open(os.environ['GITHUB_OUTPUT'], 'a', encoding='utf-8') as f:
             f.write('resumen=%s\n' % resumen)
+            f.write('titulo=%s\n' % titulo)
             f.write('tipo=%s\n' % tipo)
 
 
