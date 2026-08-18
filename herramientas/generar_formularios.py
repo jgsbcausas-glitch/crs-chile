@@ -33,6 +33,15 @@ def construir():
     formas = leer('vocabulario/formas.csv')
     lista_crs = '\n'.join('        - "%s"' % r['nombre'] for r in crs)
     lista_formas = '\n'.join('        - label: "%s"' % f['nombre'] for f in formas)
+    lista_formas_desplegable = '\n'.join('        - "%s"' % f['nombre'] for f in formas)
+
+    # Quién puede controlar una forma: cualquier establecimiento, CRS incluidos.
+    # El nombre ya trae el tipo adentro («CCP BUIN»), y la comuna desambigua.
+    controladores = sorted(
+        [(r['nombre'], r['comuna_sede']) for r in crs]
+        + [(r['nombre'], r['comuna']) for r in leer('datos/establecimientos.csv')]
+    )
+    lista_controladores = '\n'.join('        - "%s (%s)"' % (n, c) for n, c in controladores)
 
     formulario_formas = '''name: Aportar formas de cumplimiento de un CRS
 description: Decir qué penas sustitutivas controla un CRS. Es el dato que Gendarmería no publica.
@@ -158,9 +167,91 @@ body:
       required: true
 ''' % lista_crs
 
+    formulario_control = '''name: Informar que una forma la controla otro establecimiento
+description: Cuando en una comuna una forma de cumplimiento no la lleva el CRS, sino un CCP, un CDP u otro.
+title: "[CONTROL] "
+labels: ["control-por-forma", "por-revisar"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        La regla general es que el CRS competente controla las formas de cumplimiento. Pero
+        hay excepciones: por ejemplo, **el CCP Buin supervisa la remisión condicional de Buin,
+        Paine e Isla de Maipo**, aunque esas comunas dependan de dos CRS distintos.
+
+        Este formulario es para esas excepciones. Una forma por aporte; las comunas que
+        quieras.
+
+  - type: dropdown
+    id: forma
+    attributes:
+      label: ¿Qué forma de cumplimiento?
+      options:
+%s
+    validations:
+      required: true
+
+  - type: dropdown
+    id: establecimiento
+    attributes:
+      label: ¿Qué establecimiento la controla?
+      description: Escribe las primeras letras para saltar en la lista (por ejemplo «CCP B»).
+      options:
+%s
+    validations:
+      required: true
+
+  - type: textarea
+    id: comunas
+    attributes:
+      label: ¿En qué comunas?
+      description: Una por línea. Con el nombre basta; el código se resuelve solo.
+      placeholder: |
+        Buin
+        Paine
+        Isla de Maipo
+    validations:
+      required: true
+
+  - type: dropdown
+    id: como
+    attributes:
+      label: ¿Cómo lo sabes?
+      options:
+        - "Me lo confirmó el establecimiento (llamada o correo)"
+        - "Aparece en un documento oficial de Gendarmería"
+        - "Lo sé por causas que tramito habitualmente"
+        - "Me lo informó otro tribunal"
+        - "Otro (lo explico abajo)"
+    validations:
+      required: true
+
+  - type: input
+    id: detalle
+    attributes:
+      label: Detalle de la fuente
+      placeholder: "Oficio de respuesta del CCP Buin, 10-08-2026."
+    validations:
+      required: true
+
+  - type: textarea
+    id: nota
+    attributes:
+      label: Algo más que convenga saber (opcional)
+      placeholder: "Solo para sentenciados con domicilio en esas comunas; las demás formas siguen en el CRS."
+
+  - type: checkboxes
+    id: sin_datos_personales
+    attributes:
+      label: Confirmación
+      options:
+        - label: "No incluí nombres, RUT ni teléfonos personales de nadie."
+          required: true
+''' % (lista_formas_desplegable, lista_controladores)
     return {
         '.github/ISSUE_TEMPLATE/01-formas-de-cumplimiento.yml': formulario_formas,
         '.github/ISSUE_TEMPLATE/02-correccion-de-jurisdiccion.yml': formulario_jur,
+        '.github/ISSUE_TEMPLATE/04-control-por-forma.yml': formulario_control,
     }
 
 

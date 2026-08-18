@@ -25,8 +25,16 @@ base de datos.
 | [`datos/crs.csv`](datos/crs.csv) | Los 41 Centros de Reinserción Social, con sede, dirección y teléfono | completo |
 | [`datos/crs_jurisdiccion.csv`](datos/crs_jurisdiccion.csv) | Qué CRS atiende cada comuna | 323 de la tabla oficial · **23 deducidas** |
 | [`datos/crs_formas.csv`](datos/crs_formas.csv) | Qué formas de cumplimiento controla cada CRS | **lo que estamos construyendo** |
-| [`datos/establecimientos.csv`](datos/establecimientos.csv) | Los otros 175 establecimientos de Gendarmería | completo |
+| [`datos/establecimientos.csv`](datos/establecimientos.csv) | Los otros 175 establecimientos de Gendarmería, con llave estable | completo |
+| [`datos/control_por_forma.csv`](datos/control_por_forma.csv) | Excepciones: cuando una forma **no** la controla el CRS sino otro establecimiento | **se construye con aportes** |
 | [`vocabulario/formas.csv`](vocabulario/formas.csv) | Las formas de cumplimiento, con su norma | completo |
+
+**Regla general y excepciones.** Lo normal es que el CRS competente controle las formas
+de cumplimiento, y eso es lo que responde `crs_jurisdiccion.csv`. Pero no siempre: el
+**CCP Buin** supervisa la remisión condicional de Buin, Paine e Isla de Maipo, aunque esas
+comunas dependan de dos CRS distintos. Esas excepciones van en `control_por_forma.csv`,
+por comuna y forma, y pueden apuntar a cualquier establecimiento —un CCP, un CDP, otro CRS—.
+La ficha de la comuna muestra primero el CRS y debajo las excepciones.
 
 El **CUT** (código único territorial) es la llave de todo. Los nombres de comuna están
 para leer: cruzarlos es como se pierden comunas —así descubrimos que «Ránqui», en la tabla

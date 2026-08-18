@@ -17,6 +17,9 @@ Si trabajas con un CRS y sabes qué lleva, eso es exactamente lo que se necesita
 2. Elige:
    - **Aportar formas de cumplimiento** — el aporte principal.
    - **Corregir la jurisdicción de una comuna** — si un CRS distinto atiende esa comuna.
+   - **Informar que una forma la controla otro establecimiento** — cuando en una comuna una
+     forma no la lleva el CRS sino un CCP, un CDP u otro (como el CCP Buin con la remisión
+     condicional de Buin, Paine e Isla de Maipo).
    - **Corregir un dato de contacto** — una dirección o teléfono que cambió.
 3. Llena el formulario. Son listas y casillas: no hay forma de romper el formato.
 4. Envíalo y listo.

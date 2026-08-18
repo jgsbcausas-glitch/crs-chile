@@ -180,24 +180,104 @@ def jurisdiccion(campos, autor):
     )
 
 
+def control_por_forma(campos, autor):
+    """
+    Una forma, un establecimiento, N comunas → N filas en control_por_forma.csv.
+
+    El establecimiento llega como «CCP BUIN (Buin)»: nombre y comuna de sede,
+    porque hay nombres que se repiten en distintas comunas. Puede ser un CRS o
+    cualquier otro: comparten el espacio de llaves.
+    """
+    comunas, _ = leer_csv('datos/comunas.csv')
+    formas_filas, _ = leer_csv('vocabulario/formas.csv')
+    crs_filas, _ = leer_csv('datos/crs.csv')
+    est_filas, _ = leer_csv('datos/establecimientos.csv')
+
+    forma = clave_por_nombre(formas_filas, 'forma', 'nombre', campos.get('¿Qué forma de cumplimiento?'))
+    if not forma:
+        sys.exit('No reconocí la forma «%s».' % campos.get('¿Qué forma de cumplimiento?'))
+
+    etiqueta = (campos.get('¿Qué establecimiento la controla?') or '').strip()
+    m = re.match(r'^(.*?)\s*\(([^)]*)\)\s*$', etiqueta)
+    nombre_est, comuna_est = (m.group(1).strip(), m.group(2).strip()) if m else (etiqueta, '')
+    establecimiento = None
+    for fila, clave, col_comuna in [(f, 'crs', 'comuna_sede') for f in crs_filas] \
+            + [(f, 'clave', 'comuna') for f in est_filas]:
+        if fila['nombre'].strip().lower() == nombre_est.lower() \
+                and (not comuna_est or fila[col_comuna].strip().lower() == comuna_est.lower()):
+            establecimiento = fila[clave]
+            break
+    if not establecimiento:
+        sys.exit('No reconocí el establecimiento «%s».' % etiqueta)
+
+    nombres = [l.strip(' -•\t') for l in (campos.get('¿En qué comunas?') or '').split('\n') if l.strip(' -•\t')]
+    if not nombres:
+        sys.exit('El aporte no indicó ninguna comuna.')
+    resueltas = []
+    for n in nombres:
+        cut = clave_por_nombre(comunas, 'cut', 'comuna', n)
+        if not cut:
+            sys.exit('No reconocí la comuna «%s».' % n)
+        resueltas.append((cut, clave_por_nombre(comunas, 'comuna', 'cut', cut)))
+
+    fuente = ' — '.join(x for x in [
+        (campos.get('¿Cómo lo sabes?') or '').strip(),
+        (campos.get('Detalle de la fuente') or '').strip(),
+    ] if x and not sin_responder(x))
+    nota = campos.get('Algo más que convenga saber (opcional)', '')
+    nota = '' if sin_responder(nota) else nota.replace('\n', ' ').strip()
+
+    filas, cabecera = leer_csv('datos/control_por_forma.csv')
+    indice = {(f['cut'], f['forma']): f for f in filas}
+    nuevas, cambiadas = 0, 0
+    for cut, comuna in resueltas:
+        fila = {
+            'cut': cut, 'comuna': comuna, 'forma': forma, 'establecimiento': establecimiento,
+            'fuente': fuente, 'aportado_por': autor, 'fecha': date.today().isoformat(), 'nota': nota,
+        }
+        if (cut, forma) in indice:
+            indice[(cut, forma)].update(fila)
+            cambiadas += 1
+        else:
+            filas.append(fila)
+            indice[(cut, forma)] = fila
+            nuevas += 1
+
+    filas.sort(key=lambda f: (f['cut'], f['forma']))
+    escribir_csv('datos/control_por_forma.csv', cabecera, filas)
+
+    nombre_forma = campos.get('¿Qué forma de cumplimiento?')
+
+    return (
+        '%s → %s en %d comuna(s): %d nueva(s), %d actualizada(s)'
+        % (nombre_forma, nombre_est, len(resueltas), nuevas, cambiadas),
+        '[CONTROL] %s → %s (%s)' % (nombre_forma, nombre_est, ', '.join(c for _, c in resueltas)),
+    )
+
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument('--cuerpo', required=True, help='archivo con el cuerpo del issue')
     p.add_argument('--autor', required=True, help='usuario de GitHub que aportó')
     p.add_argument('--numero', required=True, help='número del issue')
-    p.add_argument('--tipo', choices=['formas', 'jurisdiccion'], help='si no se da, se deduce')
+    p.add_argument('--tipo', choices=['formas', 'jurisdiccion', 'control'], help='si no se da, se deduce')
     args = p.parse_args()
 
     with io.open(args.cuerpo, encoding='utf-8') as f:
         campos = secciones(f.read())
 
     tipo = args.tipo or ('formas' if '¿Qué CRS?' in campos else
-                         'jurisdiccion' if 'CRS que la atiende' in campos else None)
+                         'jurisdiccion' if 'CRS que la atiende' in campos else
+                         'control' if '¿Qué establecimiento la controla?' in campos else None)
     if not tipo:
         sys.exit('El issue no tiene la forma de ninguno de los formularios conocidos.')
 
-    resumen, titulo = formas_de_cumplimiento(campos, args.autor) if tipo == 'formas' \
-        else jurisdiccion(campos, args.autor)
+    if tipo == 'formas':
+        resumen, titulo = formas_de_cumplimiento(campos, args.autor)
+    elif tipo == 'jurisdiccion':
+        resumen, titulo = jurisdiccion(campos, args.autor)
+    else:
+        resumen, titulo = control_por_forma(campos, args.autor)
 
     print('Aporte #%s de @%s → %s' % (args.numero, args.autor, resumen))
     # El workflow los usa para el título del pull request y para renombrar

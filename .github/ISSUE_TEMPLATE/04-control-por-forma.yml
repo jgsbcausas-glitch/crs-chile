@@ -1,0 +1,302 @@
+name: Informar que una forma la controla otro establecimiento
+description: Cuando en una comuna una forma de cumplimiento no la lleva el CRS, sino un CCP, un CDP u otro.
+title: "[CONTROL] "
+labels: ["control-por-forma", "por-revisar"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        La regla general es que el CRS competente controla las formas de cumplimiento. Pero
+        hay excepciones: por ejemplo, **el CCP Buin supervisa la remisión condicional de Buin,
+        Paine e Isla de Maipo**, aunque esas comunas dependan de dos CRS distintos.
+
+        Este formulario es para esas excepciones. Una forma por aporte; las comunas que
+        quieras.
+
+  - type: dropdown
+    id: forma
+    attributes:
+      label: ¿Qué forma de cumplimiento?
+      options:
+        - "Remisión condicional"
+        - "Reclusión parcial"
+        - "Libertad vigilada"
+        - "Libertad vigilada intensiva"
+        - "Prestación de servicios en beneficio de la comunidad"
+        - "Monitoreo telemático"
+        - "Expulsión"
+        - "Libertad condicional"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: establecimiento
+    attributes:
+      label: ¿Qué establecimiento la controla?
+      description: Escribe las primeras letras para saltar en la lista (por ejemplo «CCP B»).
+      options:
+        - "ANEXO CRS ANTOFAGASTA (Antofagasta)"
+        - "CAIS ANTOFAGASTA (Antofagasta)"
+        - "CAIS CONCEPCION (Concepción)"
+        - "CAIS COYHAIQUE (Coihaique)"
+        - "CAIS DE VALDIVIA (Valdivia)"
+        - "CAIS IQUIQUE (Iquique)"
+        - "CAIS PTA ARENAS (Punta Arenas)"
+        - "CAIS PTO MONTT (Puerto Montt)"
+        - "CAIS RANCAGUA (Rancagua)"
+        - "CAIS SANTIAGO (Santiago)"
+        - "CAIS SERENA (La Serena)"
+        - "CAIS TALCA (Talca)"
+        - "CAIS TEMUCO (Temuco)"
+        - "CAIS VALPARAISO (Valparaíso)"
+        - "CCP ANTOFAGASTA (Antofagasta)"
+        - "CCP BIO - BIO (Concepción)"
+        - "CCP BUIN (Buin)"
+        - "CCP BULNES (Bulnes)"
+        - "CCP CAUQUENES (Cauquenes)"
+        - "CCP CHAÑARAL (Copiapó)"
+        - "CCP CHILLAN (Chillán)"
+        - "CCP COLINA I (Colina)"
+        - "CCP COLINA II (Colina)"
+        - "CCP COLLIPULLI (Collipulli)"
+        - "CCP COPIAPO (Copiapó)"
+        - "CCP CORONEL (Coronel)"
+        - "CCP COYHAIQUE (Coihaique)"
+        - "CCP CURICO (Curicó)"
+        - "CCP IQUIQUE (Iquique)"
+        - "CCP ISLA DE PASCUA (Isla de Pascua)"
+        - "CCP LAUTARO (Lautaro)"
+        - "CCP LINARES (Linares)"
+        - "CCP LOS ANDES (Los Andes)"
+        - "CCP MOLINA (Molina)"
+        - "CCP NUDO URIBE ANTOFAGASTA (Antofagasta)"
+        - "CCP NUEVA IMPERIAL (Nueva Imperial)"
+        - "CCP OSORNO (Osorno)"
+        - "CCP PARRAL (Parral)"
+        - "CCP PUNTA PEUCO (Tiltil)"
+        - "CCP RENGO Y CET (Rengo)"
+        - "CCP RIO BUENO (Río Bueno)"
+        - "CCP SAN ANTONIO (San Antonio)"
+        - "CCP SAN FELIPE (San Felipe)"
+        - "CCP SANTA CRUZ (Santa Cruz)"
+        - "CCP TALCA (Talca)"
+        - "CCP TEMUCO (Temuco)"
+        - "CCP VICTORIA (Victoria)"
+        - "CDP ANCUD (Ancud)"
+        - "CDP ARAUCO (Arauco)"
+        - "CDP CALAMA (Calama)"
+        - "CDP CASABLANCA (Casablanca)"
+        - "CDP CASTRO (Castro)"
+        - "CDP CHAITEN (Futaleufú)"
+        - "CDP CHANCO (Chanco)"
+        - "CDP CHILE CHICO (Chile Chico)"
+        - "CDP COCHRANE (Cochrane)"
+        - "CDP COMBARBALA (Combarbalá)"
+        - "CDP CURACAUTIN (Curacautín)"
+        - "CDP DE SAN CARLOS (San Carlos)"
+        - "CDP ILLAPEL (Illapel)"
+        - "CDP LA LIGUA (La Ligua)"
+        - "CDP LA UNION (La Unión)"
+        - "CDP LEBU (Lebu)"
+        - "CDP LIMACHE (Limache)"
+        - "CDP LOS ANGELES (Los Angeles)"
+        - "CDP MAULLIN (Maullín)"
+        - "CDP MELIPILLA (Melipilla)"
+        - "CDP MULCHEN (Mulchén)"
+        - "CDP OVALLE (Ovalle)"
+        - "CDP PETORCA (Petorca)"
+        - "CDP PEUMO (Peumo)"
+        - "CDP PITRUFQUÉN (Pitrufquén)"
+        - "CDP PORVENIR (Porvenir)"
+        - "CDP POZO ALMONTE (Pozo Almonte)"
+        - "CDP PTO AYSEN (Aisén)"
+        - "CDP PTO NATALES (Natales)"
+        - "CDP PUENTE ALTO (Puente Alto)"
+        - "CDP QUILLOTA (Quillota)"
+        - "CDP QUIRIHUE (Quirihue)"
+        - "CDP RIO NEGRO (Río Negro)"
+        - "CDP SANTIAGO I (Santiago)"
+        - "CDP SANTIAGO SUR (Santiago)"
+        - "CDP TALAGANTE (Talagante)"
+        - "CDP TOCOPILLA (Tocopilla)"
+        - "CDP TRAIGUEN (Traiguén)"
+        - "CDP VALLENAR (Vallenar)"
+        - "CDP VICUÑA (Vicuña)"
+        - "CDP VILLARRICA (Villarrica)"
+        - "CDP Y USEP ANGOL (Angol)"
+        - "CDP YUMBEL (Yumbel)"
+        - "CDP YUNGAY (Yungay)"
+        - "CENTRO EDUCACIÓN Y TRABAJO SEMI ABIERTO ARICA (Arica)"
+        - "CENTRO PENITENCIARIO FEMENINO ARICA (Arica)"
+        - "CET ANGOL (Angol)"
+        - "CET ANTOFAGASTA (Antofagasta)"
+        - "CET CALAMA (Calama)"
+        - "CET CAMINO LA POLVORA (Valparaíso)"
+        - "CET CAÑETE (Cañete)"
+        - "CET CONCEPCION (Tomé)"
+        - "CET COPIAPO (Copiapó)"
+        - "CET METROPOLITANO (Santiago)"
+        - "CET NUEVA VIDA (Cisnes)"
+        - "CET OSORNO (Osorno)"
+        - "CET PTA ARENAS (Punta Arenas)"
+        - "CET PUTAENDO (Putaendo)"
+        - "CET SAN CARLOS (San Carlos)"
+        - "CET TALCA (Talca)"
+        - "CET VALLE VERDE (Coihaique)"
+        - "CET VALPARAISO (Valparaíso)"
+        - "CET VICTORIA (Victoria)"
+        - "CET VILCUN (Vilcún)"
+        - "CET YUNGAY (Yungay)"
+        - "CIP CRC COPIAPO (Copiapó)"
+        - "CIP CRC COYHAIQUE (Coihaique)"
+        - "CIP CRC GRANEROS (Graneros)"
+        - "CIP CRC IQUIQUE (Iquique)"
+        - "CIP CRC PTO MONTT (Puerto Montt)"
+        - "CIP CRC SAN JOAQUIN (San Joaquín)"
+        - "CIP CRC SANTIAGO (Santiago)"
+        - "CIP CRC SERENA (La Serena)"
+        - "CIP CRC TIL -TIL (Tiltil)"
+        - "CIP CRC VALDIVIA (Valdivia)"
+        - "CIP-CRC CHOL CHOL (Cholchol)"
+        - "COMPLEJO PENITENCIARIO DE ARICA (Arica)"
+        - "CP ALTO HOSPICIO (Alto Hospicio)"
+        - "CP CONCEPCION (Concepción)"
+        - "CP IQUIQUE (Iquique)"
+        - "CP PTA ARENAS (Punta Arenas)"
+        - "CP PTO MONTT (Puerto Montt)"
+        - "CP RANCAGUA (Rancagua)"
+        - "CP SERENA (La Serena)"
+        - "CP TALCA (Talca)"
+        - "CP VALDIVIA (Valdivia)"
+        - "CP VALPARAISO (Valparaíso)"
+        - "CPF ANTOFAGASTA (Antofagasta)"
+        - "CPF CHILLAN (Chillán)"
+        - "CPF CONCEPCION (Concepción)"
+        - "CPF RANCAGUA (Rancagua)"
+        - "CPF SAN MIGUEL (San Miguel)"
+        - "CPF SANTIAGO (Santiago)"
+        - "CPF TALCA (Talca)"
+        - "CPF TEMUCO (Temuco)"
+        - "CRS ALTO HOSPICIO (Alto Hospicio)"
+        - "CRS ANGOL (Angol)"
+        - "CRS ANTOFAGASTA (Antofagasta)"
+        - "CRS CALAMA (Calama)"
+        - "CRS CASTRO (Castro)"
+        - "CRS CAUQUENES (Cauquenes)"
+        - "CRS CAÑETE (Cañete)"
+        - "CRS CHILLÁN (Chillán)"
+        - "CRS CONCEPCIÓN (Concepción)"
+        - "CRS CORONEL (Coronel)"
+        - "CRS COYHAIQUE (Coihaique)"
+        - "CRS CURICO (Curicó)"
+        - "CRS DE ARICA (Arica)"
+        - "CRS DE COPIAPÓ (Copiapó)"
+        - "CRS ILLAPEL (Illapel)"
+        - "CRS IQUIQUE (Iquique)"
+        - "CRS LA SERENA (La Serena)"
+        - "CRS LINARES (Linares)"
+        - "CRS LOS ANDES (Los Andes)"
+        - "CRS LOS ANGELES (Los Angeles)"
+        - "CRS OSORNO (Osorno)"
+        - "CRS OVALLE (Ovalle)"
+        - "CRS PUERTO MONTT (Puerto Montt)"
+        - "CRS PUNTA ARENAS (Punta Arenas)"
+        - "CRS QUILLOTA (Quillota)"
+        - "CRS QUILPUÉ (Quilpué)"
+        - "CRS RANCAGUA (Rancagua)"
+        - "CRS SAN ANTONIO (San Antonio)"
+        - "CRS SAN FERNANDO (San Fernando)"
+        - "CRS SANTIAGO (Santiago)"
+        - "CRS SANTIAGO NORTE (Santiago)"
+        - "CRS SANTIAGO OCCIDENTE (Maipú)"
+        - "CRS SANTIAGO ORIENTE (Ñuñoa)"
+        - "CRS SANTIAGO SUR (Santiago)"
+        - "CRS SANTIAGO SUR II (Puente Alto)"
+        - "CRS TALCA (Talca)"
+        - "CRS TEMUCO (Temuco)"
+        - "CRS VALDIVIA (Valdivia)"
+        - "CRS VALLENAR (Vallenar)"
+        - "CRS VALPARAíSO (Valparaíso)"
+        - "CRS VILLARRICA (Villarrica)"
+        - "DIRECCIÓN REGIONAL ARICA Y PARINACOTA (Arica)"
+        - "DR ANTOFAGASTA (Antofagasta)"
+        - "DR ARAUCANIA (Temuco)"
+        - "DR AYSEN (Coihaique)"
+        - "DR BIO - BIO (Concepción)"
+        - "DR COPIAPO (Copiapó)"
+        - "DR COQUIMBO (La Serena)"
+        - "DR IQUIQUE (Iquique)"
+        - "DR LOS LAGOS (Puerto Montt)"
+        - "DR LOS RIOS (Valdivia)"
+        - "DR MAGALLANES (Punta Arenas)"
+        - "DR MAULE (Talca)"
+        - "DR METROPOLITANA (San Joaquín)"
+        - "DR RANCAGUA (Rancagua)"
+        - "DR VALPARAISO (Valparaíso)"
+        - "UNIDAD DE SERVICIOS ESPECIALES PENITENCIARIOS DE ARICA (Arica)"
+        - "USEP ANTOFAGASTA (Antofagasta)"
+        - "USEP CAUQUENES (Cauquenes)"
+        - "USEP CHILLAN (Chillán)"
+        - "USEP CONCEPCION (Concepción)"
+        - "USEP COPIAPO (Copiapó)"
+        - "USEP COYHAIQUE (Coihaique)"
+        - "USEP IQUIQUE (Iquique)"
+        - "USEP OSORNO (Osorno)"
+        - "USEP PTA ARENAS (Punta Arenas)"
+        - "USEP PTO MONTT (Puerto Montt)"
+        - "USEP RANCAGUA (Rancagua)"
+        - "USEP SERENA (La Serena)"
+        - "USEP TALCA (Talca)"
+        - "USEP TEMUCO (Temuco)"
+        - "USEP VALDIVIA (Valdivia)"
+        - "USEP VALPARAISO (Valparaíso)"
+        - "USEP VILLARRICA (Villarrica)"
+    validations:
+      required: true
+
+  - type: textarea
+    id: comunas
+    attributes:
+      label: ¿En qué comunas?
+      description: Una por línea. Con el nombre basta; el código se resuelve solo.
+      placeholder: |
+        Buin
+        Paine
+        Isla de Maipo
+    validations:
+      required: true
+
+  - type: dropdown
+    id: como
+    attributes:
+      label: ¿Cómo lo sabes?
+      options:
+        - "Me lo confirmó el establecimiento (llamada o correo)"
+        - "Aparece en un documento oficial de Gendarmería"
+        - "Lo sé por causas que tramito habitualmente"
+        - "Me lo informó otro tribunal"
+        - "Otro (lo explico abajo)"
+    validations:
+      required: true
+
+  - type: input
+    id: detalle
+    attributes:
+      label: Detalle de la fuente
+      placeholder: "Oficio de respuesta del CCP Buin, 10-08-2026."
+    validations:
+      required: true
+
+  - type: textarea
+    id: nota
+    attributes:
+      label: Algo más que convenga saber (opcional)
+      placeholder: "Solo para sentenciados con domicilio en esas comunas; las demás formas siguen en el CRS."
+
+  - type: checkboxes
+    id: sin_datos_personales
+    attributes:
+      label: Confirmación
+      options:
+        - label: "No incluí nombres, RUT ni teléfonos personales de nadie."
+          required: true

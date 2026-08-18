@@ -63,6 +63,8 @@
   .forma { font-size: 11px; padding: 2px 8px; border-radius: 20px; border: 1px solid var(--borde); }
   .forma.si { background: color-mix(in srgb, var(--ok) 14%, transparent); border-color: var(--ok); }
   .forma.no { color: var(--suave); text-decoration: line-through; }
+  .excep-lista { margin: 4px 0 0; padding-left: 18px; font-size: 13.5px; }
+  .excep-lista li { margin-bottom: 6px; }
   .barra { height: 9px; border-radius: 20px; background: var(--borde); overflow: hidden; margin: 8px 0; }
   .barra > i { display: block; height: 100%; background: var(--ok); }
   table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
@@ -180,7 +182,8 @@ elegirOrigen().then(() => Promise.all([
   traer('datos/comunas.csv'), traer('datos/crs.csv'),
   traer('datos/crs_jurisdiccion.csv'), traer('datos/crs_formas.csv'),
   traer('vocabulario/formas.csv'),
-])).then(([comunas, crs, jur, formas, vocab]) => {
+  traer('datos/establecimientos.csv'), traer('datos/control_por_forma.csv'),
+])).then(([comunas, crs, jur, formas, vocab, est, control]) => {
   D = {
     comunas,
     crs: Object.fromEntries(crs.map(c => [c.crs, c])),
@@ -188,6 +191,10 @@ elegirOrigen().then(() => Promise.all([
     jur: Object.fromEntries(jur.map(j => [j.cut, j])),
     vocab: Object.fromEntries(vocab.map(v => [v.forma, v.nombre])),
     formas: formas.reduce((a, f) => ((a[f.crs] ??= []).push(f), a), {}),
+    // Quién controla una forma cuando no es el CRS: cualquier establecimiento,
+    // CRS incluidos. Comparten el espacio de llaves.
+    est: Object.fromEntries(est.map(e => [e.clave, e])),
+    control: control.reduce((a, c) => ((a[c.cut] ??= []).push(c), a), {}),
   };
   comunas.forEach(c => c.norm = normalizar(c.comuna));
   pintarEstado();
@@ -240,6 +247,30 @@ function fichaCrs(clave, extra = '') {
     ${chips(clave)}</div>`;
 }
 
+// Las excepciones por forma de una comuna: «para remisión condicional no es
+// el CRS, es el CCP Buin». Van pegadas al competente, porque son la respuesta
+// precisa a la pregunta que después harían los vecinos.
+function excepciones(comuna) {
+  const lista = D.control[comuna.cut] || [];
+  if (!lista.length) return '';
+  const quien = (clave) => D.crs[clave]
+    ? { nombre: D.crs[clave].nombre, comuna: D.crs[clave].comuna_sede, tel: D.crs[clave].telefono }
+    : D.est[clave]
+      ? { nombre: D.est[clave].nombre, comuna: D.est[clave].comuna, tel: D.est[clave].telefono }
+      : { nombre: clave, comuna: '', tel: '' };
+  return '<div class="excepciones"><p class="dato" style="margin-top:12px"><strong>No todo lo controla el CRS en ' +
+    esc(comuna.comuna) + ':</strong></p><ul class="excep-lista">' +
+    lista.map(c => {
+      const q = quien(c.establecimiento);
+      return '<li><span class="forma si">' + esc(D.vocab[c.forma] || c.forma) + '</span> → <strong>' +
+        esc(q.nombre) + '</strong>' + (q.comuna ? ' <span class="dato">(' + esc(q.comuna) + ')</span>' : '') +
+        (q.tel ? ' <span class="dato">· ' + esc(q.tel) + '</span>' : '') +
+        (c.nota ? '<div class="dato">' + esc(c.nota) + '</div>' : '') +
+        '<div class="dato" title="' + esc(c.fuente) + '">Fuente: ' + esc(c.fuente.slice(0, 70)) +
+        (c.fuente.length > 70 ? '…' : '') + ' · ' + esc(c.fecha) + '</div></li>';
+    }).join('') + '</ul></div>';
+}
+
 function mostrar(comuna) {
   location.hash = encodeURIComponent(comuna.comuna);
   const j = D.jur[comuna.cut];
@@ -264,6 +295,7 @@ function mostrar(comuna) {
       <p class="dato">${esc(comuna.provincia ? 'Provincia de ' + comuna.provincia + ' · ' : '')}${esc(comuna.region)}</p>
       ${aviso}
       ${competente ? `<div class="fichas">${fichaCrs(j.crs)}</div>` : ''}
+      ${excepciones(comuna)}
     </div>
     <div class="panel">
       <h3>Otros CRS cerca — si el competente no controla esa forma</h3>

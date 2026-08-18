@@ -7,6 +7,7 @@
 | `crs_jurisdiccion.csv` | Tabla oficial de jurisdicción de los CRS por comuna | 2026-08-17 | **323 explícitas** de la tabla, **23 inferidas** por provincia. Las inferidas se corrigen con aportes. |
 | `establecimientos.csv` | [gendarmeria.gob.cl/establecimientos.html](https://www.gendarmeria.gob.cl/establecimientos.html) | 2026-08-17 | Cuando Gendarmería publique cambios. |
 | `crs_formas.csv` | **Aportes de la comunidad.** Nadie publica este dato. | continuo | Cada fila trae quién la aportó, cuándo y con qué fundamento. |
+| `control_por_forma.csv` | **Aportes de la comunidad.** Excepciones a la regla «el CRS controla»: para una comuna y una forma, el establecimiento que la lleva de verdad (un CCP, un CDP, otro CRS). | continuo | Una fila por comuna y forma; `establecimiento` es una llave de `crs.csv` o de `establecimientos.csv`. |
 
 ## El CUT manda sobre el nombre
 

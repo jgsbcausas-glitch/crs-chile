@@ -92,6 +92,26 @@ for i, r in enumerate(crs, start=2):
         reparo('datos/crs.csv', i, 'la sede %s no es una comuna conocida' % r['cut_sede'])
     CRS[r['crs']] = r['nombre']
 
+# ------------------------------------------------------ Establecimientos
+
+# El resto de Gendarmería (CCP, CDP, CET…). Tienen llave propia porque pueden
+# ser referenciados desde control_por_forma.csv: un CCP puede supervisar la
+# remisión condicional de unas comunas aunque no sea el CRS competente.
+est, cab = leer('datos/establecimientos.csv')
+exige_columnas('datos/establecimientos.csv', cab, ['clave', 'tipo', 'nombre', 'cut'])
+ESTABLECIMIENTOS = {}
+for i, r in enumerate(est, start=2):
+    if not re.fullmatch(r'[a-z0-9-]+', r['clave'] or ''):
+        reparo('datos/establecimientos.csv', i, 'la clave «%s» debe ser minúsculas, números y guiones' % r['clave'])
+    if r['clave'] in ESTABLECIMIENTOS or r['clave'] in CRS:
+        reparo('datos/establecimientos.csv', i, 'clave repetida o en choque con un CRS: %s' % r['clave'])
+    if r['cut'] not in CUTS:
+        reparo('datos/establecimientos.csv', i, 'CUT desconocido: %s' % r['cut'])
+    ESTABLECIMIENTOS[r['clave']] = r['nombre']
+
+# Un mismo espacio de nombres para «quién controla»: CRS o cualquier otro.
+CONTROLADORES = {**CRS, **ESTABLECIMIENTOS}
+
 # ------------------------------------------------------------- Jurisdicción
 
 jur, cab = leer('datos/crs_jurisdiccion.csv')
@@ -151,6 +171,40 @@ for i, r in enumerate(fmt, start=2):
                % (r['crs'], r['forma'], vistos[clave]))
     vistos[clave] = i
 
+# ------------------------------------------- Control por forma (excepciones)
+
+# La regla general es «el CRS competente controla las formas de cumplimiento».
+# Este archivo son las excepciones: para una comuna y una forma, quién la
+# controla en realidad. Puede ser cualquier establecimiento —el caso que lo
+# motivó es el CCP Buin supervisando la remisión condicional de Buin, Paine e
+# Isla de Maipo, comunas que tienen dos CRS distintos—.
+ctl, cab = leer('datos/control_por_forma.csv')
+exige_columnas('datos/control_por_forma.csv', cab,
+               ['cut', 'comuna', 'forma', 'establecimiento', 'fuente', 'aportado_por', 'fecha'])
+vistos_ctl = {}
+for i, r in enumerate(ctl, start=2):
+    if r['cut'] not in CUTS:
+        reparo('datos/control_por_forma.csv', i, 'CUT desconocido: %s' % r['cut'])
+    elif CUTS[r['cut']] != r['comuna']:
+        reparo('datos/control_por_forma.csv', i,
+               'el CUT %s es «%s», no «%s»' % (r['cut'], CUTS[r['cut']], r['comuna']))
+    if r['forma'] not in FORMAS:
+        reparo('datos/control_por_forma.csv', i,
+               'forma «%s»: no está en vocabulario/formas.csv' % r['forma'])
+    if r['establecimiento'] not in CONTROLADORES:
+        reparo('datos/control_por_forma.csv', i,
+               'establecimiento «%s»: no está en crs.csv ni en establecimientos.csv' % r['establecimiento'])
+    if not (r.get('fuente') or '').strip():
+        reparo('datos/control_por_forma.csv', i, 'falta la fuente: cómo se confirmó el dato')
+    if not re.fullmatch(r'\d{4}-\d{2}-\d{2}', r.get('fecha') or ''):
+        reparo('datos/control_por_forma.csv', i, 'la fecha debe ser AAAA-MM-DD')
+    clave = (r['cut'], r['forma'])
+    if clave in vistos_ctl:
+        reparo('datos/control_por_forma.csv', i,
+               'ya hay una fila para %s + %s en la línea %d; corrige esa en vez de agregar otra'
+               % (r['comuna'], r['forma'], vistos_ctl[clave]))
+    vistos_ctl[clave] = i
+
 # --------------------------------------------- Nada personal, en ningún CSV
 #
 # Un RUT no tiene por qué aparecer nunca: este repo describe instituciones. Los
@@ -159,7 +213,7 @@ for i, r in enumerate(fmt, start=2):
 # los colegas, donde alguien podría pegar el número de un funcionario.
 
 TODOS = ('datos/comunas.csv', 'datos/crs.csv', 'datos/crs_jurisdiccion.csv',
-         'datos/crs_formas.csv', 'datos/establecimientos.csv')
+         'datos/crs_formas.csv', 'datos/establecimientos.csv', 'datos/control_por_forma.csv')
 
 for ruta in TODOS:
     completa = os.path.join(RAIZ, ruta)
@@ -169,13 +223,13 @@ for ruta in TODOS:
         for i, linea in enumerate(f, start=1):
             if RUT.search(linea):
                 reparo(ruta, i, 'parece haber un RUT: este repo no lleva datos de personas')
-            if CELULAR.search(linea) and ruta == 'datos/crs_formas.csv':
+            if CELULAR.search(linea) and ruta in ('datos/crs_formas.csv', 'datos/control_por_forma.csv'):
                 reparo(ruta, i, 'parece haber un celular personal: pon el contacto institucional')
 
 # ------------------------------------------------------------------ Informe
 
-print('comunas %d · CRS %d · jurisdicción %d · formas registradas %d · establecimientos %d'
-      % (len(CUTS), len(CRS), len(jur), len(fmt), len(leer('datos/establecimientos.csv')[0])))
+print('comunas %d · CRS %d · jurisdicción %d · formas registradas %d · establecimientos %d · excepciones por forma %d'
+      % (len(CUTS), len(CRS), len(jur), len(fmt), len(ESTABLECIMIENTOS), len(ctl)))
 
 for a in avisos:
     print('AVISO   %s' % a)
