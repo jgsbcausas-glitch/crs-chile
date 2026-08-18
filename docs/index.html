@@ -62,7 +62,9 @@
   .formas { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 7px; }
   .forma { font-size: 11px; padding: 2px 8px; border-radius: 20px; border: 1px solid var(--borde); }
   .forma.si { background: color-mix(in srgb, var(--ok) 14%, transparent); border-color: var(--ok); }
+  .forma.probable { border-style: dashed; color: var(--suave); }
   .forma.no { color: var(--suave); text-decoration: line-through; }
+  .leyenda { font-size: 11.5px; color: var(--suave); margin: 6px 0 0; }
   .excep-lista { margin: 4px 0 0; padding-left: 18px; font-size: 13.5px; }
   .excep-lista li { margin-bottom: 6px; }
   .barra { height: 9px; border-radius: 20px; background: var(--borde); overflow: hidden; margin: 8px 0; }
@@ -114,13 +116,13 @@
     <p class="dato" id="avance">Cargando…</p>
     <div class="barra"><i id="barra" style="width:0"></i></div>
     <p class="dato">
-      Cada CRS cuenta como listo cuando alguien informó al menos una forma de cumplimiento.
+      Cada CRS cuenta como listo cuando alguien <strong>confirmó</strong> al menos una forma. Lo probable no cuenta: para eso es el catastro.
       <a href="https://github.com/jgsbcausas-glitch/crs-chile/issues/new?template=01-formas-de-cumplimiento.yml">Aportar uno</a>.
     </p>
   </div>
   <div class="panel">
-    <h2>CRS sin ningún dato</h2>
-    <p class="dato">Los que más ayudan si conoces alguno.</p>
+    <h2>CRS sin ninguna forma confirmada</h2>
+    <p class="dato">Pueden tener datos probables, pero nadie los ha confirmado todavía. Son los que más ayudan si conoces alguno.</p>
     <table><thead><tr><th>CRS</th><th>Comuna</th><th>Comunas que atiende</th></tr></thead>
     <tbody id="faltantes"></tbody></table>
   </div>
@@ -232,9 +234,15 @@ function chips(clave) {
   const filas = D.formas[clave] || [];
   if (!filas.length) return '<p class="dato">Formas de cumplimiento: <strong>sin registrar</strong>. ' +
     '<a href="https://github.com/jgsbcausas-glitch/crs-chile/issues/new?template=01-formas-de-cumplimiento.yml">¿Las sabes?</a></p>';
-  return '<div class="formas">' + filas.map(f =>
-    `<span class="forma ${f.controla === 'si' ? 'si' : 'no'}" title="${esc(f.fuente)}">${esc(D.vocab[f.forma] || f.forma)}</span>`
-  ).join('') + '</div>';
+  const orden = { si: 0, probable: 1, no: 2, sin_dato: 3 };
+  const rotulo = { si: 'Confirmado', probable: 'Probable — falta confirmación', no: 'Confirmado que NO' };
+  const hayProbable = filas.some(f => f.controla === 'probable');
+
+  return '<div class="formas">' + filas
+    .slice().sort((a, b) => (orden[a.controla] ?? 9) - (orden[b.controla] ?? 9))
+    .map(f => `<span class="forma ${esc(f.controla)}" title="${esc(rotulo[f.controla] || '')} · ${esc(f.fuente)}">${esc(D.vocab[f.forma] || f.forma)}</span>`)
+    .join('') + '</div>'
+    + (hayProbable ? '<p class="leyenda">Las de borde punteado son <strong>probables</strong>: una fuente nacional las supone, sin nombrar a este CRS. Confirma antes de despachar.</p>' : '');
 }
 
 function fichaCrs(clave, extra = '') {
@@ -308,19 +316,29 @@ function mostrar(comuna) {
 
 function pintarEstado() {
   const total = Object.keys(D.crs).length;
-  const conDato = Object.keys(D.formas).filter(k => (D.formas[k] || []).length).length;
+  const conDato = Object.keys(D.formas)
+    .filter(k => (D.formas[k] || []).some(f => f.controla === 'si')).length;
+  const conProbable = Object.keys(D.formas)
+    .filter(k => (D.formas[k] || []).some(f => f.controla === 'probable')).length;
+  // Ojo con el redactado: «otros N» sugiere que son adicionales, y son los
+  // mismos. Lo que interesa es cuánto del catastro está confirmado y cuánto
+  // descansa todavía en una presunción.
+  const totalFormas = Object.values(D.formas).flat();
+  const nSi = totalFormas.filter(f => f.controla === 'si').length;
+  const nProb = totalFormas.filter(f => f.controla === 'probable').length;
   document.getElementById('avance').textContent =
-    `${conDato} de ${total} CRS tienen al menos una forma de cumplimiento registrada.`;
+    `${conDato} de ${total} CRS tienen al menos una forma confirmada. ` +
+    `En total hay ${nSi} confirmadas y ${nProb} probables, que siguen esperando confirmación.`;
   document.getElementById('barra').style.width = (total ? conDato / total * 100 : 0) + '%';
 
   const atiende = {};
   Object.values(D.jur).forEach(j => atiende[j.crs] = (atiende[j.crs] || 0) + 1);
 
   document.getElementById('faltantes').innerHTML = Object.values(D.crs)
-    .filter(c => !(D.formas[c.crs] || []).length)
+    .filter(c => !(D.formas[c.crs] || []).some(f => f.controla === 'si'))
     .sort((a, b) => (atiende[b.crs] || 0) - (atiende[a.crs] || 0))
     .map(c => `<tr><td>${esc(c.nombre)}</td><td>${esc(c.comuna_sede)}</td><td>${atiende[c.crs] || 0}</td></tr>`)
-    .join('') || '<tr><td colspan="3">Ninguno: están todos con algún dato.</td></tr>';
+    .join('') || '<tr><td colspan="3">Ninguno: todos tienen al menos una forma confirmada.</td></tr>';
 }
 
 document.querySelectorAll('.pestana').forEach(b => b.onclick = () => {

@@ -24,7 +24,9 @@ base de datos.
 | [`datos/comunas.csv`](datos/comunas.csv) | Las 346 comunas con su código oficial (CUT), región y provincia | completo |
 | [`datos/crs.csv`](datos/crs.csv) | Los 41 Centros de Reinserción Social, con sede, dirección y teléfono | completo |
 | [`datos/crs_jurisdiccion.csv`](datos/crs_jurisdiccion.csv) | Qué CRS atiende cada comuna | 323 de la tabla oficial · **23 deducidas** |
-| [`datos/crs_formas.csv`](datos/crs_formas.csv) | Qué formas de cumplimiento controla cada CRS | **lo que estamos construyendo** |
+| [`datos/crs_formas.csv`](datos/crs_formas.csv) | Qué formas de cumplimiento controla cada CRS | **71 confirmadas · 139 probables** |
+| [`datos/control_por_forma.csv`](datos/control_por_forma.csv) | Excepciones: cuando una forma no la lleva el CRS sino otro establecimiento | 3 |
+| [`datos/fuentes.csv`](datos/fuentes.csv) | La bibliografía de la investigación documental | 24 |
 | [`datos/establecimientos.csv`](datos/establecimientos.csv) | Los otros 175 establecimientos de Gendarmería, con llave estable | completo |
 | [`datos/control_por_forma.csv`](datos/control_por_forma.csv) | Excepciones: cuando una forma **no** la controla el CRS sino otro establecimiento | **se construye con aportes** |
 | [`vocabulario/formas.csv`](vocabulario/formas.csv) | Las formas de cumplimiento, con su norma | completo |
@@ -53,6 +55,22 @@ oficial de Gendarmería, es en realidad **Ninhue**—.
 
 Solo hace falta una cuenta de GitHub, que es gratis. La guía completa está en
 **[CONTRIBUIR.md](CONTRIBUIR.md)** y se lee en tres minutos.
+
+### Confirmado no es lo mismo que probable
+
+La columna `controla` de `crs_formas.csv` distingue cuatro cosas, y la distinción
+es el corazón del asunto:
+
+- **`si`** — una fuente individualiza a ese CRS y esa forma, o alguien lo confirmó
+  trabajando con él. Es lo que se puede afirmar.
+- **`probable`** — una fuente nacional dice que el programa opera en los 41 CRS,
+  pero no nombra a este. Orienta; no basta para despachar.
+- **`no`** — alguien confirmó que ese CRS **no** la lleva. Vale tanto como un `si`:
+  evita derivaciones inútiles.
+- **ausencia de fila** — nadie ha dicho nada. No es lo mismo que «no la lleva».
+
+**Un aporte tuyo convierte un `probable` en un `si`.** Eso es exactamente lo que
+falta: hay 139 esperando confirmación.
 
 **Aporta solo lo que te conste, y di cómo lo sabes.** Un dato sin fuente no se puede
 sostener frente a nadie, así que el formulario la pide. Y **no marcar una forma no

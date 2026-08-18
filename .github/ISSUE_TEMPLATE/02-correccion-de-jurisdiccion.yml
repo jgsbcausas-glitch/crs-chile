@@ -34,7 +34,7 @@ body:
         - "CRS CONCEPCIÓN"
         - "CRS CORONEL"
         - "CRS COYHAIQUE"
-        - "CRS CURICO"
+        - "CRS CURICÓ"
         - "CRS DE ARICA"
         - "CRS DE COPIAPÓ"
         - "CRS ILLAPEL"
@@ -42,7 +42,7 @@ body:
         - "CRS LA SERENA"
         - "CRS LINARES"
         - "CRS LOS ANDES"
-        - "CRS LOS ANGELES"
+        - "CRS LOS ÁNGELES"
         - "CRS OSORNO"
         - "CRS OVALLE"
         - "CRS PUERTO MONTT"
@@ -62,7 +62,7 @@ body:
         - "CRS TEMUCO"
         - "CRS VALDIVIA"
         - "CRS VALLENAR"
-        - "CRS VALPARAíSO"
+        - "CRS VALPARAÍSO"
         - "CRS VILLARRICA"
     validations:
       required: true

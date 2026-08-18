@@ -37,6 +37,11 @@ y a medias. Este dato termina en resoluciones.
 qué documento, qué fecha. Un dato sin fuente no se puede defender frente a nadie, y dentro
 de seis meses nadie recordará de dónde salió.
 
+**Confirmar un «probable» es aportar.** Muchos CRS tienen formas marcadas como
+probables: salen de que el programa nacional opere en los 41, no de que alguien haya
+verificado ese en particular. Si trabajas con uno y te consta, decirlo convierte una
+presunción en un hecho — y eso es justo lo que falta.
+
 **No marcar no es decir que no.** Dejar una forma sin marcar significa «no lo sé», que es
 una respuesta perfectamente válida. Si confirmaste que un CRS **no** lleva algo, eso va en
 la segunda lista del formulario — y vale tanto como lo afirmativo, porque evita

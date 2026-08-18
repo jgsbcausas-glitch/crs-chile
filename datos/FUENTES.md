@@ -9,6 +9,26 @@
 | `crs_formas.csv` | **Aportes de la comunidad.** Nadie publica este dato. | continuo | Cada fila trae quién la aportó, cuándo y con qué fundamento. |
 | `control_por_forma.csv` | **Aportes de la comunidad.** Excepciones a la regla «el CRS controla»: para una comuna y una forma, el establecimiento que la lleva de verdad (un CCP, un CDP, otro CRS). | continuo | Una fila por comuna y forma; `establecimiento` es una llave de `crs.csv` o de `establecimientos.csv`. |
 
+## Investigación documental nacional (2026-08-18)
+
+Una revisión de fuentes públicas de Gendarmería —informes de PSBC, cuentas
+públicas, documentos de sistema abierto— dejó **71 combinaciones CRS × forma
+confirmadas y 139 probables**, con su bibliografía en `fuentes.csv`.
+
+La distinción se conserva en la columna `controla` y **no se colapsa**: un
+`probable` sale de que el programa opere en los 41 CRS, no de que alguien haya
+visto a este en particular. Presentarlos juntos habría llenado el catastro a
+costa de volverlo poco fiable, que es lo contrario de para qué existe.
+
+No se importó la base operativa comuna × forma (2.768 filas) que venía con la
+investigación: es una vista derivada de la jurisdicción más las formas, y sus
+únicas excepciones reales —las tres del CCP Buin— ya estaban acá. Duplicar un
+dato derivado es garantizar que algún día discrepe de su origen.
+
+**La expulsión salió del vocabulario** por decisión de uso: como pena
+sustitutiva es excepcionalísima, y la investigación no encontró evidencia
+alguna sobre ella (0 confirmadas, 0 probables, 41 desconocidas).
+
 ## El CUT manda sobre el nombre
 
 Todos los cruces se hacen por **código único territorial**, nunca por el nombre de la

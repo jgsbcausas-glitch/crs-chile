@@ -21,7 +21,10 @@ import sys
 
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-CONTROLA = ('si', 'no', 'sin_dato')
+# `probable` es lo que una fuente nacional deja suponer sin nombrar al CRS.
+# Tiene valor —cubre casi todo el país— pero no es lo mismo que confirmado,
+# y la pantalla los muestra distinto. Presentarlos juntos sería mentir.
+CONTROLA = ('si', 'probable', 'no', 'sin_dato')
 ORIGENES = ('explicita', 'inferida', 'manual')
 CONFIANZAS = ('alta', 'media', 'baja')
 
@@ -142,6 +145,22 @@ if sin_crs:
     aviso('datos/crs_jurisdiccion.csv', 1,
           '%d comuna(s) sin CRS asignado: %s' % (len(sin_crs), ', '.join(sorted(sin_crs)[:8])))
 
+# ------------------------------------------------------------- Fuentes
+
+# La bibliografía de la investigación documental. Una fila de formas puede
+# apuntar acá con `fuente_id` en vez de repetir la URL en cada una.
+fuentes, cab = leer('datos/fuentes.csv')
+exige_columnas('datos/fuentes.csv', cab, ['id', 'titulo', 'url', 'tipo'])
+FUENTES_ID = set()
+for i, r in enumerate(fuentes, start=2):
+    if not r['id']:
+        reparo('datos/fuentes.csv', i, 'sin id')
+    elif r['id'] in FUENTES_ID:
+        reparo('datos/fuentes.csv', i, 'id repetido: %s' % r['id'])
+    if not (r.get('titulo') or '').strip():
+        reparo('datos/fuentes.csv', i, 'sin título')
+    FUENTES_ID.add(r['id'])
+
 # ------------------------------------------------- Formas de cumplimiento
 
 RUT = re.compile(r'\b\d{1,2}\.?\d{3}\.?\d{3}-[\dkK]\b')
@@ -163,6 +182,9 @@ for i, r in enumerate(fmt, start=2):
         reparo('datos/crs_formas.csv', i, 'falta la fuente: cómo se confirmó el dato')
     if not re.fullmatch(r'\d{4}-\d{2}-\d{2}', r.get('fecha') or ''):
         reparo('datos/crs_formas.csv', i, 'la fecha debe ser AAAA-MM-DD')
+    if (r.get('fuente_id') or '') and r['fuente_id'] not in FUENTES_ID:
+        reparo('datos/crs_formas.csv', i,
+               'fuente_id «%s»: no está en datos/fuentes.csv' % r['fuente_id'])
 
     clave = (r['crs'], r['forma'])
     if clave in vistos:
@@ -213,7 +235,8 @@ for i, r in enumerate(ctl, start=2):
 # los colegas, donde alguien podría pegar el número de un funcionario.
 
 TODOS = ('datos/comunas.csv', 'datos/crs.csv', 'datos/crs_jurisdiccion.csv',
-         'datos/crs_formas.csv', 'datos/establecimientos.csv', 'datos/control_por_forma.csv')
+         'datos/crs_formas.csv', 'datos/establecimientos.csv', 'datos/control_por_forma.csv',
+         'datos/fuentes.csv')
 
 for ruta in TODOS:
     completa = os.path.join(RAIZ, ruta)
@@ -228,8 +251,13 @@ for ruta in TODOS:
 
 # ------------------------------------------------------------------ Informe
 
-print('comunas %d · CRS %d · jurisdicción %d · formas registradas %d · establecimientos %d · excepciones por forma %d'
-      % (len(CUTS), len(CRS), len(jur), len(fmt), len(ESTABLECIMIENTOS), len(ctl)))
+confirmadas = sum(1 for r in fmt if r['controla'] == 'si')
+probables = sum(1 for r in fmt if r['controla'] == 'probable')
+negadas = sum(1 for r in fmt if r['controla'] == 'no')
+print('comunas %d · CRS %d · jurisdicción %d · establecimientos %d · excepciones por forma %d'
+      % (len(CUTS), len(CRS), len(jur), len(ESTABLECIMIENTOS), len(ctl)))
+print('formas: %d confirmadas · %d probables · %d descartadas · %d fuentes'
+      % (confirmadas, probables, negadas, len(FUENTES_ID)))
 
 for a in avisos:
     print('AVISO   %s' % a)
