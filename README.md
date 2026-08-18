@@ -34,6 +34,11 @@ oficial de Gendarmería, es en realidad **Ninhue**—.
 
 ## Cómo aportar (no necesitas saber git)
 
+> **¿Vas a invitar a colegas?** Compárteles la
+> [invitación con el paso a paso](https://jgsbcausas-glitch.github.io/crs-chile/participa.html):
+> explica el porqué, guía la creación de la cuenta botón por botón, y trae un texto listo
+> para pegar en un correo o un grupo. Se imprime como volante.
+
 1. Entra a **[Issues → New issue](../../issues/new/choose)**.
 2. Elige el formulario que corresponda y llénalo. Todo son listas desplegables y casillas.
 3. Listo. Alguien lo revisa y un robot lo convierte en una fila del archivo.

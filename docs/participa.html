@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ayúdanos a saber qué controla cada CRS — CRS Chile</title>
+<meta name="description" content="Invitación a funcionarios judiciales: aporta en 5 minutos qué formas de cumplimiento controla el CRS con el que trabajas. Sin saber de tecnología.">
+<style>
+  /* Misma base que index.html: sin librerías, abre rápido desde la red de un
+     tribunal, y sirve tanto en pantalla como impresa como volante. */
+  :root {
+    --fondo: #f6f7f9; --panel: #fff; --texto: #1c2024; --suave: #667;
+    --borde: #dfe3e8; --azul: #1f4e79; --azul-claro: #4a80ad;
+    --ok: #2e7d4f; --alerta: #b8860b; --aviso-fondo: #fdf8ec;
+    --hero: #1f4e79; --hero-texto: #fff;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --fondo: #14171a; --panel: #1c2024; --texto: #e8eaed; --suave: #98a0a8;
+      --borde: #2e3439; --azul: #7fb0d8; --azul-claro: #a8cae6;
+      --ok: #6bbd8c; --alerta: #d9b366; --aviso-fondo: #241f14;
+      --hero: #16324d; --hero-texto: #f2f5f8;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--fondo); color: var(--texto);
+    font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  a { color: var(--azul); }
+  .envoltorio { max-width: 820px; margin: 0 auto; padding: 0 18px 60px; }
+
+  /* ---------------------------------------------------------- Portada */
+  .hero {
+    background: var(--hero); color: var(--hero-texto);
+    padding: 44px 18px 40px; margin: 0 -18px 28px; text-align: center;
+  }
+  .hero .interior { max-width: 720px; margin: 0 auto; }
+  .hero .eyebrow {
+    display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: .12em;
+    text-transform: uppercase; opacity: .85; margin-bottom: 14px;
+  }
+  .hero h1 { font-size: clamp(28px, 5vw, 42px); line-height: 1.15; margin: 0 0 14px; letter-spacing: -.01em; }
+  .hero p.lead { font-size: 18px; margin: 0 auto 26px; max-width: 600px; opacity: .95; }
+  .cta {
+    display: inline-block; background: #fff; color: var(--hero); font-weight: 700;
+    padding: 14px 26px; border-radius: 10px; text-decoration: none; font-size: 17px;
+    box-shadow: 0 4px 14px rgba(0,0,0,.18);
+  }
+  .cta:hover { transform: translateY(-1px); }
+  .hero .bajo-cta { margin: 14px 0 0; font-size: 14px; opacity: .85; }
+  .hero .bajo-cta a { color: inherit; }
+
+  /* ------------------------------------------------------ Secciones */
+  section { margin-bottom: 34px; }
+  h2 { font-size: 24px; margin: 0 0 12px; letter-spacing: -.01em; }
+  h3 { font-size: 17px; margin: 22px 0 6px; }
+  .tres { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+  .tarjeta {
+    background: var(--panel); border: 1px solid var(--borde); border-radius: 12px; padding: 16px 18px;
+  }
+  .tarjeta .num { font-size: 30px; font-weight: 800; color: var(--azul); line-height: 1; margin-bottom: 6px; }
+  .tarjeta strong { display: block; margin-bottom: 4px; }
+  .tarjeta p { margin: 0; color: var(--suave); font-size: 14.5px; }
+  .aviso {
+    background: var(--aviso-fondo); border-left: 4px solid var(--alerta);
+    padding: 12px 16px; border-radius: 0 8px 8px 0; margin: 14px 0;
+  }
+  .verde { border-left-color: var(--ok); background: color-mix(in srgb, var(--ok) 9%, var(--panel)); }
+
+  /* ------------------------------------------------------- Pasos */
+  .paso {
+    display: grid; grid-template-columns: 52px 1fr; gap: 14px; align-items: start;
+    background: var(--panel); border: 1px solid var(--borde); border-radius: 12px;
+    padding: 18px; margin-bottom: 12px;
+  }
+  .paso .n {
+    width: 44px; height: 44px; border-radius: 50%; background: var(--azul); color: #fff;
+    font-weight: 800; font-size: 20px; display: grid; place-items: center;
+  }
+  .paso h3 { margin: 4px 0 6px; font-size: 18px; }
+  .paso p, .paso li { margin: 0 0 6px; }
+  .paso ul, .paso ol { margin: 6px 0 4px; padding-left: 20px; }
+  .paso .tiempo { font-size: 12.5px; color: var(--suave); font-weight: 600; text-transform: uppercase; letter-spacing: .05em; }
+  .btn-ej {
+    display: inline-block; font-size: 13px; padding: 3px 10px; border-radius: 6px;
+    background: var(--ok); color: #fff; font-weight: 600; vertical-align: middle;
+  }
+  .btn-ej.gris { background: var(--suave); }
+  kbd {
+    font: 13px/1 ui-monospace, Consolas, monospace; background: var(--fondo);
+    border: 1px solid var(--borde); border-bottom-width: 2px; border-radius: 5px; padding: 2px 6px;
+  }
+  .ingles { color: var(--suave); font-style: italic; }
+  .enlace-caja {
+    display: block; background: var(--fondo); border: 1px dashed var(--borde); border-radius: 8px;
+    padding: 10px 12px; font: 14px ui-monospace, Consolas, monospace; word-break: break-all; margin: 8px 0;
+  }
+
+  /* -------------------------------------------------------- Detalles */
+  details { background: var(--panel); border: 1px solid var(--borde); border-radius: 10px; padding: 12px 16px; margin-bottom: 8px; }
+  summary { cursor: pointer; font-weight: 600; }
+  details p { margin: 8px 0 0; color: var(--suave); }
+
+  /* --------------------------------------------- Texto para compartir */
+  .copiar {
+    position: relative; background: var(--panel); border: 1px solid var(--borde); border-radius: 12px; padding: 16px 18px;
+  }
+  .copiar pre {
+    white-space: pre-wrap; font: 15px/1.55 system-ui, sans-serif; margin: 0; color: var(--texto);
+  }
+  .copiar button {
+    position: absolute; top: 12px; right: 12px; border: 1px solid var(--borde); background: var(--fondo);
+    color: var(--texto); border-radius: 7px; padding: 6px 12px; cursor: pointer; font: inherit; font-size: 13px;
+  }
+  .copiar button.ok { border-color: var(--ok); color: var(--ok); }
+
+  .pie { color: var(--suave); font-size: 13px; text-align: center; margin-top: 30px; }
+  .pie a { color: inherit; }
+
+  /* ---------------------------------------------------------- Impreso
+     Como volante: la portada, el porqué y los pasos. Sin botones ni cajas de
+     copiar. Un enlace escrito, porque en papel no se pincha. */
+  @media print {
+    body { background: #fff; color: #000; font-size: 12.5px; }
+    .hero { background: #1f4e79 !important; color: #fff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; padding: 24px 18px; }
+    .cta { box-shadow: none; }
+    .no-imprimir, .copiar, details:not([open]) { display: none !important; }
+    .paso, .tarjeta { break-inside: avoid; border-color: #bbb; }
+    .paso .n { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    a { text-decoration: none; color: #000; }
+    .solo-impreso { display: block !important; }
+  }
+  .solo-impreso { display: none; }
+</style>
+</head>
+<body>
+<div class="envoltorio">
+
+<header class="hero">
+  <div class="interior">
+    <span class="eyebrow">Para funcionarios de tribunales con competencia penal</span>
+    <h1>Ayúdanos a saber qué controla cada CRS</h1>
+    <p class="lead">
+      Estamos construyendo entre tribunales el dato que Gendarmería no publica:
+      <strong>qué formas de cumplimiento lleva cada Centro de Reinserción Social</strong>.
+      Si trabajas con uno, sabes algo que ningún otro tribunal sabe.
+    </p>
+    <a class="cta" href="https://github.com/jgsbcausas-glitch/crs-chile/issues/new?template=01-formas-de-cumplimiento.yml">
+      Aportar ahora — 5 minutos
+    </a>
+    <p class="bajo-cta">
+      ¿Nunca has usado GitHub? <a href="#paso-a-paso">Acá está el paso a paso</a>, sin tecnicismos.
+    </p>
+    <p class="solo-impreso" style="margin-top:14px; font-size:13px">
+      jgsbcausas-glitch.github.io/crs-chile/participa.html
+    </p>
+  </div>
+</header>
+
+<!-- ------------------------------------------------------------ Por qué -->
+<section>
+  <h2>Por qué importa</h2>
+  <div class="tres">
+    <div class="tarjeta">
+      <div class="num">1</div>
+      <strong>No todos los CRS llevan todo</strong>
+      <p>Muchos controlan remisión condicional y reclusión parcial, pero no libertad vigilada intensiva ni monitoreo telemático. Si el competente no la lleva, hay que derivar.</p>
+    </div>
+    <div class="tarjeta">
+      <div class="num">2</div>
+      <strong>Nadie lo tiene escrito</strong>
+      <p>Gendarmería publica direcciones y teléfonos, no la oferta de cada CRS. Hoy la respuesta se consigue llamando por teléfono, cada vez, en cada tribunal.</p>
+    </div>
+    <div class="tarjeta">
+      <div class="num">3</div>
+      <strong>Se arma entre todos</strong>
+      <p>Cada tribunal conoce bien a sus CRS. Si cada uno aporta lo suyo, en semanas tenemos los 41 cubiertos y nadie vuelve a partir de cero.</p>
+    </div>
+  </div>
+
+  <p class="aviso verde" style="margin-top:16px">
+    <strong>Lo que ya está hecho:</strong> las 346 comunas con su CRS competente, los 41 CRS con dirección y
+    teléfono, y una <a href="./index.html">página de consulta</a> donde escribes una comuna y sale todo.
+    <strong>Lo que falta eres tú:</strong> qué formas de cumplimiento controla el CRS que conoces.
+  </p>
+</section>
+
+<!-- --------------------------------------------------------- Paso a paso -->
+<section id="paso-a-paso">
+  <h2>Paso a paso, desde cero</h2>
+  <p>
+    El único trámite es <strong>crear una cuenta en GitHub</strong>, la plataforma donde viven los datos.
+    Es gratis, se hace una sola vez y toma unos tres minutos. La pantalla está en inglés; abajo va cada
+    botón con su traducción. Después de eso, aportar es llenar un formulario con listas y casillas.
+  </p>
+
+  <div class="paso">
+    <div class="n">1</div>
+    <div>
+      <span class="tiempo">3 minutos · una sola vez</span>
+      <h3>Crea tu cuenta en GitHub</h3>
+      <ol>
+        <li>Entra a <a href="https://github.com/signup">github.com/signup</a>.</li>
+        <li>Escribe tu <strong>correo</strong> <span class="ingles">(Email)</span>. Sirve el institucional o uno personal; usa el que revises seguido, porque te llegará un código.</li>
+        <li>Inventa una <strong>contraseña</strong> <span class="ingles">(Password)</span> — mínimo 8 caracteres con letras y números.</li>
+        <li>Elige un <strong>nombre de usuario</strong> <span class="ingles">(Username)</span>. Puede ser tu nombre y apellido juntos, sin espacios: <kbd>mperez</kbd>, <kbd>juan-soto</kbd>. Este nombre quedará como autor de tus aportes.</li>
+        <li>Pulsa <span class="btn-ej">Continue</span> y resuelve el rompecabezas de verificación <span class="ingles">(Verify)</span>. Es para comprobar que no eres un robot.</li>
+        <li>Revisa tu correo: llegará un <strong>código de 8 dígitos</strong>. Escríbelo y listo.</li>
+      </ol>
+      <p class="aviso" style="margin-bottom:0">
+        Si te pregunta preferencias o planes de pago, elige siempre lo <strong>gratuito</strong>
+        <span class="ingles">(Free)</span> y salta lo demás <span class="ingles">(Skip)</span>. No hace falta nada más.
+      </p>
+    </div>
+  </div>
+
+  <div class="paso">
+    <div class="n">2</div>
+    <div>
+      <span class="tiempo">10 segundos</span>
+      <h3>Abre el formulario de aporte</h3>
+      <p>Con la sesión iniciada, entra a este enlace. Va directo al formulario, sin pasar por nada más:</p>
+      <span class="enlace-caja">https://github.com/jgsbcausas-glitch/crs-chile/issues/new?template=01-formas-de-cumplimiento.yml</span>
+      <p>
+        Si en vez de un formulario ves una caja de texto vacía, es que no habías iniciado sesión: entra
+        con tu cuenta y vuelve a abrir el enlace.
+      </p>
+    </div>
+  </div>
+
+  <div class="paso">
+    <div class="n">3</div>
+    <div>
+      <span class="tiempo">3 a 5 minutos</span>
+      <h3>Llena el formulario</h3>
+      <ul>
+        <li><strong>Título</strong> <span class="ingles">(Add a title)</span>: después de <kbd>[FORMAS]</kbd> escribe el nombre del CRS. Si se te olvida, no pasa nada: se corrige solo.</li>
+        <li><strong>¿Qué CRS?</strong> — elígelo de la lista desplegable.</li>
+        <li><strong>Formas que SÍ controla</strong> — marca solo las que te consten.</li>
+        <li><strong>Formas que confirmaste que NO controla</strong> — si lo sabes con certeza, márcalo: vale tanto como lo anterior.</li>
+        <li><strong>¿Cómo lo sabes?</strong> — elige una opción y agrega el detalle: con quién hablaste, qué documento, qué fecha. Sin esto el dato no se puede sostener.</li>
+        <li>Marca la casilla de <strong>confirmación</strong>: que no incluiste nombres, RUT ni teléfonos personales de nadie.</li>
+      </ul>
+      <p class="aviso" style="margin-bottom:0">
+        <strong>Dejar una forma sin marcar no significa que el CRS no la lleve.</strong> Significa que no lo
+        sabes, y esa es una respuesta perfectamente válida. Es mejor un aporte corto y firme que uno largo
+        y a medias: este dato termina en resoluciones.
+      </p>
+    </div>
+  </div>
+
+  <div class="paso">
+    <div class="n">4</div>
+    <div>
+      <span class="tiempo">1 clic</span>
+      <h3>Envíalo</h3>
+      <p>Pulsa el botón verde <span class="btn-ej">Create</span> abajo a la derecha. Ya está.</p>
+      <p>
+        Alguien lo revisa —normalmente el mismo día— y un programa lo convierte en una fila de la base
+        de datos. Te llegará un correo de GitHub cuando entre. Si algo no calza, te preguntarán ahí mismo,
+        en tu aporte.
+      </p>
+    </div>
+  </div>
+
+  <h3 style="margin-top:26px">Otras dos cosas que puedes aportar</h3>
+  <p>
+    Con la misma cuenta, desde <a href="https://github.com/jgsbcausas-glitch/crs-chile/issues/new/choose">este enlace</a>:
+  </p>
+  <ul>
+    <li><strong>Corregir la jurisdicción de una comuna</strong> — si sabes que la atiende un CRS distinto del que figura. Hay 23 comunas cuyo CRS está deducido y conviene confirmar.</li>
+    <li><strong>Corregir un dato de contacto</strong> — una dirección o teléfono que cambió.</li>
+  </ul>
+</section>
+
+<!-- -------------------------------------------------------------- Dudas -->
+<section>
+  <h2>Preguntas que se repiten</h2>
+
+  <details>
+    <summary>¿Por qué GitHub y no un formulario de Google o un correo?</summary>
+    <p>
+      Porque acá el dato queda <strong>versionado, revisado y con su fuente</strong>: se sabe quién dijo qué,
+      cuándo, y en qué se basó. Si dos tribunales discrepan, se ve y se conversa. Un formulario suelto
+      no deja rastro y un correo se pierde en la bandeja. Y lo que se junta acá lo puede usar cualquier
+      tribunal, sin pedirle permiso a nadie.
+    </p>
+  </details>
+
+  <details>
+    <summary>¿Y si de verdad no puedo o no quiero crear la cuenta?</summary>
+    <p>
+      Mándale el aporte por correo a quien te invitó, con lo mismo que pide el formulario: qué CRS, qué
+      formas sí, cuáles no, y cómo lo sabes. Lo cargará a tu nombre o como anónimo, como prefieras. Es
+      más lento, pero vale igual.
+    </p>
+  </details>
+
+  <details>
+    <summary>¿Qué NO debo escribir?</summary>
+    <p>
+      Nombres de funcionarios (de Gendarmería o del tribunal), RUT de nadie, teléfonos o correos
+      particulares. Direcciones y teléfonos <strong>institucionales</strong> sí, porque ya son públicos.
+      El sistema rechaza automáticamente cualquier cosa que parezca un RUT.
+    </p>
+  </details>
+
+  <details>
+    <summary>¿Y si me equivoco?</summary>
+    <p>
+      Escribe un comentario en tu propio aporte diciendo qué corregir, o abre uno nuevo. Nada entra a la
+      base sin que una persona lo revise, así que un error no hace daño.
+    </p>
+  </details>
+
+  <details>
+    <summary>¿Alguien ya informó algo distinto de mi CRS?</summary>
+    <p>
+      Puede pasar: cambian los convenios, se abren y cierran programas. No es un problema, es
+      información. Al revisar se ven las dos versiones lado a lado con sus fuentes y fechas, y gana la
+      fuente más firme y más reciente —no quien llegó primero—.
+    </p>
+  </details>
+
+  <details>
+    <summary>¿Puedo ver lo que aportaron otros?</summary>
+    <p>
+      Sí, y sin cuenta: en la <a href="./index.html">página de consulta</a> escribes una comuna y sale su
+      CRS con las formas registradas. La pestaña «Estado del catastro» muestra cuánto falta y qué CRS
+      no tienen ningún dato todavía —ahí es donde tu aporte rinde más—.
+    </p>
+  </details>
+
+  <details>
+    <summary>¿Esto es oficial?</summary>
+    <p>
+      No. Es un dato de referencia construido por funcionarios judiciales a partir de fuentes públicas y
+      de lo que cada uno verifica en su trabajo. Gendarmería no lo revisa ni lo respalda. Sirve para no
+      partir de cero; <strong>antes de despachar, confirma con el CRS</strong>.
+    </p>
+  </details>
+</section>
+
+<!-- --------------------------------------------------- Para compartir -->
+<section class="no-imprimir">
+  <h2>Para reenviar</h2>
+  <p>Un texto corto, listo para pegar en un correo o un grupo de WhatsApp.</p>
+  <div class="copiar">
+    <button type="button" id="btn-copiar">Copiar</button>
+<pre id="texto-compartir">Hola. Entre varios tribunales estamos armando un catastro de qué formas de cumplimiento controla cada CRS (remisión, reclusión parcial, libertad vigilada, LVI, PSBC, monitoreo telemático…), porque Gendarmería no lo publica y hoy se resuelve llamando por teléfono.
+
+Si trabajas con un CRS, tu aporte toma 5 minutos y sirve a todos:
+https://jgsbcausas-glitch.github.io/crs-chile/participa.html
+
+Ahí está la explicación y el paso a paso, pensado para gente que nunca ha usado GitHub. Y para consultar lo que ya hay:
+https://jgsbcausas-glitch.github.io/crs-chile/
+
+Gracias.</pre>
+  </div>
+</section>
+
+<p class="pie">
+  <a href="https://github.com/jgsbcausas-glitch/crs-chile">CRS Chile</a> · datos abiertos bajo CC BY 4.0 ·
+  nació en el 11° Juzgado de Garantía de Santiago
+</p>
+
+</div>
+
+<script>
+// Copiar el texto de invitación. Si el navegador no deja (pasa en algunos
+// entornos institucionales), se selecciona el texto para que baste Ctrl+C.
+document.getElementById('btn-copiar').addEventListener('click', async function () {
+  const texto = document.getElementById('texto-compartir').innerText;
+  const boton = this;
+  const listo = () => { boton.textContent = 'Copiado'; boton.classList.add('ok');
+    setTimeout(() => { boton.textContent = 'Copiar'; boton.classList.remove('ok'); }, 2200); };
+  try {
+    await navigator.clipboard.writeText(texto); listo();
+  } catch (_) {
+    const r = document.createRange(); r.selectNodeContents(document.getElementById('texto-compartir'));
+    const s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+    try { document.execCommand('copy'); listo(); } catch (__) { boton.textContent = 'Selecciona y Ctrl+C'; }
+  }
+});
+</script>
+</body>
+</html>
