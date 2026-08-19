@@ -80,7 +80,7 @@ jobs:
             algo distinto para el mismo CRS y la misma forma, acá se ve el cambio —y
             esa discrepancia conviene resolverla en el issue antes de seguir.
 
-            Cierra #${{ github.event.issue.number }}
+            Closes #${{ github.event.issue.number }}
           labels: aporte-automatico
 
       - name: Avisar en el issue
