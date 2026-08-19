@@ -116,6 +116,10 @@ def formas_de_cumplimiento(campos, autor):
     for forma, valor in [(f, 'si') for f in controla] + [(f, 'no') for f in no_controla]:
         fila = {
             'crs': crs, 'forma': forma, 'controla': valor, 'fuente': fuente,
+            # Vacío a propósito: si esta fila REEMPLAZA una de la investigación
+            # documental, el fuente_id viejo no puede quedar pegado a un aporte
+            # que no salió de esa fuente (pasó con el issue #4).
+            'fuente_id': '',
             'aportado_por': autor, 'fecha': date.today().isoformat(), 'nota': nota,
         }
         if (crs, forma) in indice:
